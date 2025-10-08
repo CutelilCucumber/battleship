@@ -15,7 +15,8 @@ export function Gameboard(){
 
     const placeShip = (x, y, ship) => {
         //ship placing phase is before targeting, board spot will never be "miss"
-        if (ship.isSunk() !== false) throw new Error("ship must be Ship object.")
+        if (x > 9 || y > 9) throw new Error("Target is out of bounds.")
+        if (!Object.hasOwn(ship, 'isSunk')) throw new Error("ship must be Ship object.")
         if (_board[x][y] === "ocean"){
             _board[x][y] = ship;
             _fleet.push(ship);
@@ -24,14 +25,19 @@ export function Gameboard(){
     }
 
     const receiveAttack = (x, y) => {
-        if (_board[x][y] === "miss") throw new Error("Location has already been targeted.")
+        if (x > 9 || y > 9) throw new Error("Target is out of bounds.")
+        if (_board[x][y] === "miss" || _board[x][y] === "hit") throw new Error("Location has already been targeted.")
         if (_board[x][y] === "ocean") _board[x][y] = "miss";
-        else return _board[x][y].hit()//false if hit, true if sunk
+        else{
+            let hitShip = _board[x][y]
+            _board[x][y] = "hit"
+            return hitShip.hit()
+        }//false if hit, true if sunk
     }
 
     const fleetIsSunk = () => {
-        for(let ship in _fleet){
-            if (ship.isSunk() === false) return false;
+        for(let i = 0; i < _fleet.length; i++){
+            if (_fleet[i].isSunk() === false) return false;
         }
         return true;
     }
@@ -61,5 +67,22 @@ export function Ship(length){
     return {
         hit,
         isSunk
+    }
+}
+
+export function Player(playerName){
+    let _playerName = playerName ?? false; //if false, player is considered a bot
+    let _gameBoard = Gameboard();
+
+    const getName = () => {
+        return _playerName;
+    }
+
+    const getBoard = () => {
+        return _gameBoard;
+    }
+
+    return {
+        getBoard
     }
 }
