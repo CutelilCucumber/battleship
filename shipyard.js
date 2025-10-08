@@ -1,28 +1,45 @@
 export function Gameboard(){
     let _board = initBoard();
+    let _fleet = [];
 
     function initBoard() {
         let arr = [];
         for(let i = 0; i < 10; i++) {
             arr[i] = [];
             for(let j = 0; j < 10; j++) {
-                arr[i][j] = Tile();
+                arr[i][j] = "ocean";
             }
         }
         return arr;
     }
 
     const placeShip = (x, y, ship) => {
-        _board[x][y].setShip(ship);
+        //ship placing phase is before targeting, board spot will never be "miss"
+        if (ship.isSunk() !== false) throw new Error("ship must be Ship object.")
+        if (_board[x][y] === "ocean"){
+            _board[x][y] = ship;
+            _fleet.push(ship);
+        } 
+        else throw new Error("Location already has a ship.")
     }
 
     const receiveAttack = (x, y) => {
-        return _board[x][y].target();
+        if (_board[x][y] === "miss") throw new Error("Location has already been targeted.")
+        if (_board[x][y] === "ocean") _board[x][y] = "miss";
+        else return _board[x][y].hit()//false if hit, true if sunk
+    }
+
+    const fleetIsSunk = () => {
+        for(let ship in _fleet){
+            if (ship.isSunk() === false) return false;
+        }
+        return true;
     }
 
     return {
         placeShip,
-        receiveAttack
+        receiveAttack,
+        fleetIsSunk
     }
 }
 
@@ -42,29 +59,7 @@ export function Ship(length){
     }
 
     return {
-        hit
-    }
-}
-
-function Tile(){
-    let _hit = false;
-    let _ship = null;
-
-    const setShip = (ship) => {
-        if (_ship) throw new Error("Ship already exists at specified location.")
-        _ship = ship;
-    }
-
-    const target = () => {//returns true if sunk, false if hit, 'miss' if miss
-        if (_hit) throw new Error("Location has already been targeted.")
-        _hit = true;
-
-        if (_ship) return _ship.hit();
-        else return("miss");
-    }
-
-    return {
-        setShip,
-        target
+        hit,
+        isSunk
     }
 }
