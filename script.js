@@ -110,7 +110,10 @@ function barrage(e){
 
     let result = player2.getBoard().receiveAttack(x, y);
     if (result === undefined) interface1.missOpponent(x, y);
-    else interface1.hitOpponent(x, y, result);
+    else {
+        interface1.hitOpponent(x, y, result);
+        if (player2.getBoard().fleetIsSunk()) endGame(player1.getName());
+    }
     document.getElementById(e.target.id).removeEventListener('click', barrage);
 
     if(botGame) botBarrage();
@@ -125,11 +128,20 @@ function botBarrage(){
     while(JSON.stringify(botShots).includes([x, y])){
         x = Math.floor(Math.random()*10);
         y = Math.floor(Math.random()*10);
-        console.log("Attempting shot at ("+x+", "+y+")")
     }
-    botShots.push(x, y);
+    botShots.push([x, y]);
     
     let result = player1.getBoard().receiveAttack(x, y);
     if (result === undefined) interface1.missSelf(x, y);
-    else interface1.hitSelf(x, y, result);
+    else {
+        interface1.hitSelf(x, y, result);
+        if (player1.getBoard().fleetIsSunk()) endGame(player2.getName());
+    }
+}
+
+function endGame(winner){
+    document.querySelectorAll(".target").forEach(tile => {
+        tile.removeEventListener('click', barrage)
+    })
+    console.log(winner+" is the Winner!");
 }

@@ -75,7 +75,7 @@ export function Ship(length, name){
 }
 
 export function Player(playerName){
-    let _playerName = playerName ?? false; //if false, player is considered a bot
+    let _playerName = playerName ?? 'Computer'; //if false, player is considered a bot
     let _gameBoard = Gameboard();
 
     const getName = () => {
@@ -87,6 +87,7 @@ export function Player(playerName){
     }
 
     return {
+        getName,
         getBoard
     }
 }
