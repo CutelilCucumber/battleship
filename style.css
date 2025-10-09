@@ -1,4 +1,4 @@
-#boardContainer {
+.boardContainer {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -19,9 +19,19 @@
     border-right: 1px solid black;
     text-align: center;
     font: 1.8em sans-serif;
+    background-image: url("./assets/waterTile.gif");
+    background-size: cover;
 }
 
 .boardTitle {
     grid-column-start: 1;
     grid-column-end: -1
+}
+
+.target:hover {
+    cursor: crosshair;
+}
+
+#opponentBoard {
+    display: none;
 }
