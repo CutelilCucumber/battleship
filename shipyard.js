@@ -49,8 +49,9 @@ export function Gameboard(){
     }
 }
 
-export function Ship(length){
+export function Ship(length, name){
     let _length = length;
+    let _name = name;
     let _hits = 0;
     let _sunk = false;
 
@@ -60,8 +61,11 @@ export function Ship(length){
     }
 
     function isSunk(){
-        if (_hits >= _length) _sunk = true;
-        return _sunk;
+        if (_hits >= _length){
+            _sunk = true;
+            return _name;
+        }
+        else return false;
     }
 
     return {

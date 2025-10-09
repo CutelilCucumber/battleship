@@ -10,6 +10,7 @@ export function drawBoard(name) {
         let newBoard = document.createElement("div");
         let newDiv = document.createElement("h3");
         newDiv.classList.add("boardTitle")
+        newDiv.id = "boardTitleOpponent";
         newDiv.textContent = "Opponent's Board";
         newBoard.appendChild(newDiv);
         newBoard.classList.add("board")
@@ -30,6 +31,7 @@ export function drawBoard(name) {
         newBoard = document.createElement("div");
         newDiv = document.createElement("h3");
         newDiv.classList.add("boardTitle")
+        newDiv.id = "boardTitle"+_name;
         newDiv.textContent = _name+"'s Board";
         newBoard.appendChild(newDiv);
         newBoard.classList.add("board");
@@ -61,11 +63,16 @@ export function drawBoard(name) {
         document.getElementById("opponentBoard").style.display = "grid";
     }
 
-    const hitOpponent = (x, y) => {
+    const hitOpponent = (x, y, sunkShip) => {
         let targetTile = document.getElementById(x+''+y+'opponent');
         targetTile.textContent = "X";
         targetTile.style.color = "red";
         targetTile.classList.remove("target");
+
+        if (sunkShip){
+            document.getElementById('boardTitleOpponent')
+                .textContent = "Enemy "+sunkShip+" sunk!";
+        }
     }
 
     const missOpponent = (x, y) => {
@@ -75,10 +82,15 @@ export function drawBoard(name) {
         targetTile.classList.remove("target");
     }
 
-    const hitSelf = (x, y) => {
+    const hitSelf = (x, y, sunkShip) => {
         let targetTile = document.getElementById(x+''+y+_name);
         targetTile.textContent = "X";
         targetTile.style.color = "red";
+
+        if (sunkShip){
+            document.getElementById('boardTitle'+_name)
+                .textContent = "Your "+sunkShip+" was sunk!";
+        }
     }
 
     const missSelf = (x, y) => {

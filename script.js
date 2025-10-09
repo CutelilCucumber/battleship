@@ -10,17 +10,17 @@ interface1.initialize()
 let player2 = Player()//not including a name identifies a bot
 let botGame = true;
 
-let carrier = Ship(5);
-let battleship = Ship(4);
-let cruiser = Ship(3);
-let submarine = Ship(3);
-let destroyer = Ship(2);
+let carrier = Ship(5, 'Carrier');
+let battleship = Ship(4, 'Battleship');
+let cruiser = Ship(3, 'Cruiser');
+let submarine = Ship(3, 'Submarine');
+let destroyer = Ship(2, 'Destroyer');
 
-let carrier2 = Ship(5);
-let battleship2 = Ship(4);
-let cruiser2 = Ship(3);
-let submarine2 = Ship(3);
-let destroyer2 = Ship(2);
+let carrier2 = Ship(5, 'Carrier');
+let battleship2 = Ship(4, 'Battleship');
+let cruiser2 = Ship(3, 'Cruiser');
+let submarine2 = Ship(3, 'Submarine');
+let destroyer2 = Ship(2, 'Destroyer');
 
 //manually input ship coordinates (handled by DOM later)
 player1.getBoard().placeShip(1, 1, carrier)
@@ -110,16 +110,26 @@ function barrage(e){
 
     let result = player2.getBoard().receiveAttack(x, y);
     if (result === undefined) interface1.missOpponent(x, y);
-    if (result === false || result === true) interface1.hitOpponent(x, y);
+    else interface1.hitOpponent(x, y, result);
     document.getElementById(e.target.id).removeEventListener('click', barrage);
 
     if(botGame) botBarrage();
     //else hide current interface
 }
 
-let botShots = [];
+let botShots = [[-1, -1]];
 function botBarrage(){
     //fires at random, eventually will implement intelligence
-    let x = Math.floor(Math.random()*10);
-    let y = Math.floor(Math.random()*10);
+    let x = -1;
+    let y = -1;
+    while(JSON.stringify(botShots).includes([x, y])){
+        x = Math.floor(Math.random()*10);
+        y = Math.floor(Math.random()*10);
+        console.log("Attempting shot at ("+x+", "+y+")")
+    }
+    botShots.push(x, y);
+    
+    let result = player1.getBoard().receiveAttack(x, y);
+    if (result === undefined) interface1.missSelf(x, y);
+    else interface1.hitSelf(x, y, result);
 }
