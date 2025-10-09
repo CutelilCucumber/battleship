@@ -1,0 +1,27 @@
+#boardContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2em;
+}
+
+.board {
+    width: 400px;
+    height: 400px;
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+}
+
+.tile {
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    text-align: center;
+    font: 1.8em sans-serif;
+}
+
+.boardTitle {
+    grid-column-start: 1;
+    grid-column-end: -1
+}
