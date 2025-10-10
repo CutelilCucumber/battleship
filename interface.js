@@ -111,3 +111,67 @@ export function drawBoard(name) {
         //hideboard
     }
 }
+
+export function menuOptions(){
+    let _difficulty = 1
+    document.getElementById('singleOption').style.backgroundColor = 'lightblue';
+    document.getElementById('easy').style.backgroundColor = 'lightblue';
+
+
+    const initialize = () =>{
+        document.getElementById('singleOption').addEventListener('click', function(e){
+            _difficulty = 1;
+            e.target.style.backgroundColor = "lightblue";
+            document.getElementById('multiOption')
+                .style.backgroundColor = null;
+            document.querySelectorAll(".difficulty").forEach(option => {
+                option.style.display = 'block';
+                option.style.backgroundColor = null;
+            })
+            document.getElementById('easy').style.backgroundColor = 'lightblue';
+        });
+        document.getElementById('easy').addEventListener('click', function(e){
+            _difficulty = 1;
+            document.querySelectorAll(".difficulty").forEach(option => {
+                option.style.backgroundColor = null;
+            })
+            e.target.style.backgroundColor = 'lightBlue'
+        })
+        document.getElementById('medium').addEventListener('click', function(e){
+            _difficulty = 2;
+            document.querySelectorAll(".difficulty").forEach(option => {
+                option.style.backgroundColor = null;
+            })
+            e.target.style.backgroundColor = 'lightBlue'
+        })
+        document.getElementById('hard').addEventListener('click', function(e){
+            _difficulty = 3;
+            document.querySelectorAll(".difficulty").forEach(option => {
+                option.style.backgroundColor = null;
+            })
+            e.target.style.backgroundColor = 'lightBlue'
+        })
+        document.getElementById('multiOption').addEventListener('click', function(e){
+            _difficulty = 0;
+            e.target.style.backgroundColor = "lightblue";
+            document.getElementById('singleOption')
+                .style.backgroundColor = null;
+            document.querySelectorAll(".difficulty").forEach(option => {
+                option.style.display = 'none';
+            })
+        });
+        document.getElementById('start').addEventListener('click', function(e){
+                document.querySelectorAll(".option").forEach(option => {
+                    option.style.display = 'none';
+            })
+        });
+    } 
+
+    const getDifficulty = () => {
+        return _difficulty;
+    }
+    return {
+        initialize,
+        getDifficulty
+    }
+}

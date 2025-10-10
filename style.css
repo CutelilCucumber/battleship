@@ -1,3 +1,33 @@
+button {
+    background-color: white;
+}
+
+button:hover {
+    background-color: lightblue;
+}
+
+.options {
+    display: grid;
+    grid-template-rows: 1fr, 1fr, 1fr, 1fr;
+    grid-template-columns: 1fr, 1fr;
+    gap: .2em;
+    margin-right: 2em;
+    margin-left: 2em;
+}
+
+#singleOption {
+    grid-column: 1/1;
+}
+
+#multiOption {
+    grid-column: 2/2;
+}
+
+#start {
+    grid-column: 2;
+    grid-row: 2/5;
+}
+
 .boardContainer {
     display: flex;
     align-items: center;
