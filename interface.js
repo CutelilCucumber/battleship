@@ -32,7 +32,7 @@ export function drawBoard(name) {
         newDiv = document.createElement("h3");
         newDiv.classList.add("boardTitle")
         newDiv.id = "boardTitle"+_name;
-        newDiv.textContent = _name+"'s Board";
+        newDiv.textContent = "Your Board";
         newBoard.appendChild(newDiv);
         newBoard.classList.add("board");
         newBoard.id = _name+"Board";

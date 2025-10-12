@@ -20,6 +20,7 @@ export function Gameboard(){
         if (_board[x][y] === "ocean"){
             _board[x][y] = ship;
             _fleet.push(ship);
+            console.log(ship.getName()+" added at "+ x+" "+y)
         } 
         else throw new Error("Location already has a ship.")
     }
@@ -68,9 +69,19 @@ export function Ship(length, name){
         else return false;
     }
 
+    const getLength = () => {
+        return _length;
+    }
+
+    const getName = () => {
+        return _name;
+    }
+
     return {
         hit,
-        isSunk
+        isSunk,
+        getLength,
+        getName
     }
 }
 

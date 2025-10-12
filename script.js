@@ -2,17 +2,19 @@ import { Ship, Player } from "./shipyard.js";
 import { drawBoard, menuOptions } from "./interface.js";
 const options = menuOptions();
 options.initialize()
+let illegalSpots = [[-1, -1]];
 
 document.getElementById('start').addEventListener('click', function(e){
     
 });
 //initialization phase, this will be updated from DOM later
-let name = 'humanNameHere'
+let name = 'Human'
 let player1 = Player(name)
 let interface1 = drawBoard(name)
 interface1.initialize()
 
 let player2 = Player()//not including a name identifies a bot
+
 
 
 let carrier = Ship(5, 'Carrier');
@@ -29,16 +31,17 @@ let destroyer2 = Ship(2, 'Destroyer');
 
 
 //manually input ship coordinates (handled by DOM later)
-    player1.getBoard().placeShip(1, 1, carrier)
-    interface1.addShip(1, 1, 'c')
-    player1.getBoard().placeShip(2, 1, carrier)
-    interface1.addShip(2, 1, 'c')
-    player1.getBoard().placeShip(3, 1, carrier)
-    interface1.addShip(3, 1, 'c')
-    player1.getBoard().placeShip(4, 1, carrier)
-    interface1.addShip(4, 1, 'c')
-    player1.getBoard().placeShip(5, 1, carrier)
-    interface1.addShip(5, 1, 'c')
+    randomPlacement(player1, carrier, interface1)
+    // player1.getBoard().placeShip(1, 1, carrier)
+    // interface1.addShip(1, 1, 'c')
+    // player1.getBoard().placeShip(2, 1, carrier)
+    // interface1.addShip(2, 1, 'c')
+    // player1.getBoard().placeShip(3, 1, carrier)
+    // interface1.addShip(3, 1, 'c')
+    // player1.getBoard().placeShip(4, 1, carrier)
+    // interface1.addShip(4, 1, 'c')
+    // player1.getBoard().placeShip(5, 1, carrier)
+    // interface1.addShip(5, 1, 'c')
 
     player1.getBoard().placeShip(8, 1, battleship)
     interface1.addShip(8, 1, 'b')
@@ -94,15 +97,34 @@ interface1.finishPlacement();
 initTargets();
 //update interface only when logical state changes, not in logic
 //place ship or target location with input
-//update targeting use results from target return value
-//destroy event listener on interface change
+function randomPlacement(player, ship, inter){
+    let shipSpots = []
+
+    while (!allLegal(shipSpots) || shipSpots.length === 0){
+        let placeDir = Math.floor(Math.random()*2);
+        shipSpots[0] = randomLegal()
+
+        if (placeDir === 0){
+            for(let i = 1; i < ship.getLength(); i++){
+                shipSpots[i] = [shipSpots[0][0]+i, shipSpots[0][1]]
+                console.log()
+            }
+        } else {
+            for(let i = 1; i < ship.getLength(); i++){
+                shipSpots[i] = [shipSpots[0][0], shipSpots[0][1]+i]
+            }
+        }
+    }
+    for (let i = 0; i < shipSpots.length; i++){
+        player.getBoard().placeShip(shipSpots[i][0], shipSpots[i][1]);
+        illegalSpots.push(shipSpots[i]);
+        inter.addShip(shipSpots[i][0], shipSpots[i][i], 'c')
+    }
+}
+
 
 //after placement phase
 
-//combat phase
-// while(!player1.getBoard().fleetIsSunk() && !player2.getBoard().fleetIsSunk()){
-
-// }
 function initTargets(){
     document.querySelectorAll(".target").forEach(tile => {
         tile.addEventListener('click', barrage)
@@ -126,11 +148,11 @@ function barrage(e){
     //else hide current interface
 }
 
-let botShots = [[-1, -1]];
+
 function botBarrage(){
     //fires at random, eventually will implement intelligence
     let target = []
-    if (options.getDifficulty() === 1) target = easyBotTargeting();
+    if (options.getDifficulty() === 1) target = randomLegal();
     if (options.getDifficulty() === 2) target = mediumBotTargeting();
     if (options.getDifficulty() === 3) target = hardBotTargeting();
     
@@ -142,21 +164,50 @@ function botBarrage(){
     }
 }
 
-function easyBotTargeting(){
+// function randomPossibleHorizontal(coord){
+//     let possibleX1 = coord[0]+1;
+//     let possibleX2 = coord[0]-1;
+
+//     if(possibleX1 >= 0 && possibleX1 < 10 
+//         && !JSON.stringify(illegalSpots).includes([possibleX1, coord[1]])
+//         && possibleX2 >= 0 && possibleX2 < 10 
+//         && !JSON.stringify(illegalSpots).includes([possibleX2, coord[1]])){
+//             if (Math.floor(Math.random()*2) === 0) return [possibleX1, coord[1]];
+//             else return [possibleX2, coord[1]]
+//         }
+// // }
+
+
+function isLegal(spot){
+    if (JSON.stringify(illegalSpots).includes([spot[0], spot[1]])) return false;
+    else if (spot[0] < 0 || spot[0] > 9 || spot[1] < 0 || spot[1] > 9) return false;
+    else return true;
+}
+
+function allLegal(spots){
+    for(let i = 0; i<spots.length; i++){
+        if (!isLegal(spots[i])) return false;
+    }
+    return true;
+}
+
+function randomLegal(){
     let x = -1;
     let y = -1;
-    while(JSON.stringify(botShots).includes([x, y])){
+    while(JSON.stringify(illegalSpots).includes([x, y])){
         x = Math.floor(Math.random()*10);
         y = Math.floor(Math.random()*10);
     }
-    botShots.push([x, y]);
+    illegalSpots.push([x, y]);
     return [x, y];
 }
 function mediumBotTargeting(){
 //finish at the end
+//update targeting use results from target return value
 }
 function hardBotTargeting(){
 //finish at the end
+//use possible heatmap for board
 }
 
 function endGame(winner){
