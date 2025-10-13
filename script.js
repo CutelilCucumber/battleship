@@ -1,5 +1,6 @@
 import { Ship, Player } from "./shipyard.js";
 import { drawBoard, menuOptions } from "./interface.js";
+import { drag } from "./drag.js";
 const options = menuOptions();
 options.initialize()
 let illegalSpots = [[-1, -1]];
@@ -27,13 +28,20 @@ function startPlacement(){
     }
     
     interface1.initialize()
-
+    drag();
     document.getElementById(name1+'ranButton').addEventListener('click', () => {
         player1.getBoard().clearBoard();
         resetIllegals();
         interface1.clearLetters();
 
         randomPlaceAll(player1, fleet1, interface1)
+    });
+    document.getElementById(name1+'clearButton').addEventListener('click', () => {
+        player1.getBoard().clearBoard();
+        resetIllegals();
+        interface1.resetShipyard();
+        interface1.clearLetters();
+
     });
     document.getElementById(name1+'confButton').addEventListener('click', endPlacement);
 }
@@ -88,8 +96,6 @@ function randomPlacement(player, ship, inter){
         if (inter) inter.addShip(shipSpots[i][0], shipSpots[i][1], ship.getName()[0])
     }
 }
-
-
 //after placement phase
 
 function initTargets(){
@@ -131,19 +137,6 @@ function botBarrage(){
         if (player1.getBoard().fleetIsSunk()) endGame(player2.getName());
     }
 }
-
-// function randomPossibleHorizontal(coord){
-//     let possibleX1 = coord[0]+1;
-//     let possibleX2 = coord[0]-1;
-
-//     if(possibleX1 >= 0 && possibleX1 < 10 
-//         && !JSON.stringify(illegalSpots).includes([possibleX1, coord[1]])
-//         && possibleX2 >= 0 && possibleX2 < 10 
-//         && !JSON.stringify(illegalSpots).includes([possibleX2, coord[1]])){
-//             if (Math.floor(Math.random()*2) === 0) return [possibleX1, coord[1]];
-//             else return [possibleX2, coord[1]]
-//         }
-// // }
 
 function resetIllegals() {
     illegalSpots = [[-1, -1]];

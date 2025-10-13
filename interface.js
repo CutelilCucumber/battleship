@@ -41,10 +41,14 @@ export function drawBoard(name) {
                 newDiv = document.createElement("div");
                 if(i < 0) newDiv.textContent = j;
                 else if (j < 0) newDiv.textContent = i;
-                else newDiv.classList.add("placeable");
+                else newDiv.classList.add("droppable");
                 newDiv.classList.add("tile");
                 newDiv.id = j+""+i+_name;
                 newBoard.appendChild(newDiv);
+                newDiv.style.gridColumnStart = j+2;
+                newDiv.style.gridColumnEnd = j+3;
+                newDiv.style.gridRowStart = i+3;
+                newDiv.style.gridRowEnd = i+4;
             }
         }
         newContainer.appendChild(newBoard);
@@ -53,30 +57,121 @@ export function drawBoard(name) {
         shipContainer.id = _name+"Shipyard";
         shipContainer.classList.add("shipyard");
         newContainer.appendChild(shipContainer);
+        newDiv = document.createElement("h3");
+        newDiv.classList.add('shipsTitle')
+        newDiv.textContent = "Available Ships";
+        shipContainer.appendChild(newDiv);
+
+        //add ships to shipyard
+        let newShip = document.createElement('img');
+        newShip.id = _name+"Carrier";
+        newShip.classList.add("carrier");
+        newShip.classList.add("ship");
+        newShip.classList.add("draggable");
+        newShip.draggable = 'true';
+        newShip.dataset.width = 1;
+        newShip.dataset.length = 5;
+        newShip.src = "assets/shipCarrier.png";
+        shipContainer.appendChild(newShip);
+
+        newShip = document.createElement('img');
+        newShip.id = _name+"Battleship";
+        newShip.classList.add("battleship");
+        newShip.classList.add("ship");
+        newShip.classList.add("draggable");
+        newShip.draggable = 'true';
+        newShip.dataset.width = 1;
+        newShip.dataset.length = 4;
+        newShip.src = "assets/shipBattleship.png";
+        shipContainer.appendChild(newShip);
+
+        newShip = document.createElement('img');
+        newShip.id = _name+"Destroyer";
+        newShip.classList.add("destroyer");
+        newShip.classList.add("ship");
+        newShip.classList.add("draggable");
+        newShip.draggable = 'true';
+        newShip.dataset.width = 1;
+        newShip.dataset.length = 3;
+        newShip.src = "assets/shipDestroyer.png";
+        shipContainer.appendChild(newShip);
+
+        newShip = document.createElement('img');
+        newShip.id = _name+"Submarine";
+        newShip.classList.add("submarine");
+        newShip.classList.add("ship");
+        newShip.classList.add("draggable");
+        newShip.draggable = 'true';
+        newShip.dataset.width = 1;
+        newShip.dataset.length = 3;
+        newShip.src = "assets/shipSub.png";
+        shipContainer.appendChild(newShip);
+
+        newShip = document.createElement('img');
+        newShip.id = _name+"PatrolBoat";
+        newShip.classList.add("patrolBoat");
+        newShip.classList.add("ship");
+        newShip.classList.add("draggable");
+        newShip.draggable = 'true';
+        newShip.dataset.width = 1;
+        newShip.dataset.length = 2;
+        newShip.src = "assets/shipPatrol.png";
+        shipContainer.appendChild(newShip);
 
         //create bottons for shipyard
+        let buttContainer = document.createElement('span')
+        buttContainer.classList.add('shipButtons')
+        shipContainer.appendChild(buttContainer)
+
         let newButton = document.createElement('button');
         newButton.id = _name+"ranButton";
         newButton.classList.add("ranButton")
-        newButton.textContent = "Randomize"
-        shipContainer.appendChild(newButton)
+        newButton.textContent = "Random"
+        buttContainer.appendChild(newButton)
+
+        newButton = document.createElement('button');
+        newButton.id = _name+"clearButton";
+        newButton.classList.add("clearButton")
+        newButton.textContent = "Clear"
+        buttContainer.appendChild(newButton)
 
         newButton = document.createElement('button');
         newButton.id = _name+"confButton";
         newButton.classList.add("confButton")
         newButton.textContent = "Confirm"
-        shipContainer.appendChild(newButton)
+        buttContainer.appendChild(newButton)
+
+        document.querySelectorAll('.draggable').forEach(ship => {
+            ship.addEventListener('auxclick', (e) => {
+                if(e.button === 1){
+                    if (ship.src.includes('rotate')){
+                        ship.src = ship.src.replace('rotate', 'ship');
+                        ship.style.height = null;
+                        ship.style.width = null;
+                        ship.dataset.length = ship.dataset.width;
+                        ship.dataset.width = '1';
+                        
+                    } else {
+                        ship.src = ship.src.replace('ship', 'rotate');
+                        ship.style.width = 34*ship.dataset.length+'px';
+                        ship.style.height = '34px';
+                        ship.dataset.width = ship.dataset.length;
+                        ship.dataset.length = '1';
+                    }
+                }
+            })
+        })
     }
 
     const addShip = (x, y, shipID) => {
         let targetTile = document.getElementById(x+''+y+_name);
-        targetTile.classList.remove("placeable");
+        targetTile.classList.remove("droppable");
         targetTile.textContent = shipID;
     }
 
     const finishPlacement = () => {
-        document.querySelectorAll('placeable').forEach(tile => {
-            tile.classList.remove('placeable');
+        document.querySelectorAll('droppable').forEach(tile => {
+            tile.classList.remove('droppable');
         });
         document.getElementById("opponentBoard").style.display = "grid";
         document.getElementById(_name+"Shipyard").style.display = "none";
@@ -127,6 +222,16 @@ export function drawBoard(name) {
         }
     }
 
+    const resetShipyard = () => {
+        document.querySelectorAll('.ship').forEach(ship => {
+            document.getElementById(_name+'Shipyard').appendChild(ship);
+            ship.style.gridArea = null;
+            ship.style.height = null;
+            ship.style.width = null;
+            ship.src = ship.src.replace('rotate', 'ship')
+        })
+    } 
+
     return {
         initialize,
         addShip,
@@ -135,7 +240,8 @@ export function drawBoard(name) {
         missOpponent,
         hitSelf,
         missSelf,
-        clearLetters
+        clearLetters,
+        resetShipyard
         //showboard
         //hideboard
     }

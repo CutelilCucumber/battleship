@@ -69,9 +69,63 @@ button:hover {
 .shipyard {
     margin-top: 1em;
     width: 300px;
-    height: 200px;
+    gap: .5em;
+    justify-content: space-evenly;
     background-color: beige;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(7, 1fr);
+    grid-template-columns: repeat(5, 35px);
+    grid-template-rows: repeat(10, 35px);
+}
+.shipsTitle {
+    grid-column-start: 1;
+    grid-column-end: -1;
+}
+.carrier {
+    /* grid-row: 2/7; */
+    width: 34px;
+    height: 170px;
+    /* background-image: url("assets/ships/ShipCarrierHull.png");
+    background-size: 100% 90%;
+    background-repeat: no-repeat; */
+}
+.battleship {
+    /* grid-row: 2/6; */
+    width: 34px;
+    height: 136px;
+    /* background-image: url("assets/ships/ShipBattleshipHull.png");
+    background-size: 90% 100%;
+    background-repeat: no-repeat; */
+}
+.destroyer {
+    /* grid-row: 2/5; */
+    width: 34px;
+    height: 102px;
+    /* background-image: url("assets/ships/ShipDestroyerHull.png");
+    background-size: 80% 100%;
+    background-repeat: no-repeat; */
+}
+.submarine {
+    /* grid-row: 2/5; */
+    width: 34px;
+    height: 102px;
+    /* background-image: url("assets/ships/ShipSubMarineHull.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat; */
+}
+.patrolBoat {
+    grid-row: 2/4;
+    width: 34px;
+    height: 68px;
+    /* background-image: url("assets/ships/ShipPatrolHull.png");
+    background-size: 75% 100%;
+    background-repeat: no-repeat; */
+}
+.shipButtons {
+    grid-row: 9/10;
+    grid-column: 1/-1;
+    display: flex;
+    justify-content: space-evenly;
+}
+.dragging {
+    opacity: .5;
 }
