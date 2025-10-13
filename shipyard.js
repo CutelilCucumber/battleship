@@ -13,6 +13,15 @@ export function Gameboard(){
         return arr;
     }
 
+    const fleetSize = () => {
+        return _fleet.length;
+    }
+
+    const clearBoard = () => {
+        _board = initBoard();
+        _fleet = [];
+    }
+
     const placeShip = (x, y, ship) => {
         //ship placing phase is before targeting, board spot will never be "miss"
         if (x > 9 || y > 9) throw new Error("Target is out of bounds.")
@@ -20,7 +29,6 @@ export function Gameboard(){
         if (_board[x][y] === "ocean"){
             _board[x][y] = ship;
             _fleet.push(ship);
-            console.log(ship.getName()+" added at "+ x+" "+y)
         } 
         else throw new Error("Location already has a ship.")
     }
@@ -44,9 +52,11 @@ export function Gameboard(){
     }
 
     return {
+        clearBoard,
         placeShip,
         receiveAttack,
-        fleetIsSunk
+        fleetIsSunk,
+        fleetSize
     }
 }
 

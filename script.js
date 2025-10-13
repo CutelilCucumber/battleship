@@ -4,121 +4,88 @@ const options = menuOptions();
 options.initialize()
 let illegalSpots = [[-1, -1]];
 
-document.getElementById('start').addEventListener('click', function(e){
+let name1 = 'Player';
+let name2 = 'Player2';
+let fleet1 = [Ship(5, 'Carrier'), Ship(4, 'Battleship'), Ship(3, 'Destroyer'), Ship(3, 'Submarine'), Ship(2, 'Patrol Boat')];
+let fleet2 = [Ship(5, 'Carrier'), Ship(4, 'Battleship'), Ship(3, 'Destroyer'), Ship(3, 'Submarine'), Ship(2, 'Patrol Boat')];
+let player1 = null;
+let player2 = null;
+let interface1 = null;
+let interface2 = null;
+
+document.getElementById('start').addEventListener('click', startPlacement);
+
+function startPlacement(){
+    player1 = Player(name1)
+    interface1 = drawBoard(name1)
+
+    if(options.getDifficulty() > 0){
+        player2 = Player() //not including a name tells the game its bot
+        randomPlaceAll(player2, fleet2);
+    } else {
+        //some code here that collects player 2 name and initializes
+    }
     
-});
-//initialization phase, this will be updated from DOM later
-let name = 'Human'
-let player1 = Player(name)
-let interface1 = drawBoard(name)
-interface1.initialize()
+    interface1.initialize()
 
-let player2 = Player()//not including a name identifies a bot
+    document.getElementById(name1+'ranButton').addEventListener('click', () => {
+        player1.getBoard().clearBoard();
+        resetIllegals();
+        interface1.clearLetters();
 
+        randomPlaceAll(player1, fleet1, interface1)
+    });
+    document.getElementById(name1+'confButton').addEventListener('click', endPlacement);
+}
 
+function endPlacement(){
+    if (player1.getBoard().fleetSize() !== 17) throw new Error("all ships must be placed: "+player1.getBoard().fleetSize())
+    resetIllegals();
+    interface1.finishPlacement();
+    initTargets();
+}
 
-let carrier = Ship(5, 'Carrier');
-let battleship = Ship(4, 'Battleship');
-let cruiser = Ship(3, 'Cruiser');
-let submarine = Ship(3, 'Submarine');
-let destroyer = Ship(2, 'Destroyer');
+function randomPlaceAll(player, fleet, inter){
+    
+    randomPlacement(player, fleet[0], inter)
+    randomPlacement(player, fleet[1], inter)
+    randomPlacement(player, fleet[2], inter)
+    randomPlacement(player, fleet[3], inter)
+    randomPlacement(player, fleet[4], inter)
 
-let carrier2 = Ship(5, 'Carrier');
-let battleship2 = Ship(4, 'Battleship');
-let cruiser2 = Ship(3, 'Cruiser');
-let submarine2 = Ship(3, 'Submarine');
-let destroyer2 = Ship(2, 'Destroyer');
+}
 
-
-//manually input ship coordinates (handled by DOM later)
-    randomPlacement(player1, carrier, interface1)
-    // player1.getBoard().placeShip(1, 1, carrier)
-    // interface1.addShip(1, 1, 'c')
-    // player1.getBoard().placeShip(2, 1, carrier)
-    // interface1.addShip(2, 1, 'c')
-    // player1.getBoard().placeShip(3, 1, carrier)
-    // interface1.addShip(3, 1, 'c')
-    // player1.getBoard().placeShip(4, 1, carrier)
-    // interface1.addShip(4, 1, 'c')
-    // player1.getBoard().placeShip(5, 1, carrier)
-    // interface1.addShip(5, 1, 'c')
-
-    player1.getBoard().placeShip(8, 1, battleship)
-    interface1.addShip(8, 1, 'b')
-    player1.getBoard().placeShip(8, 2, battleship)
-    interface1.addShip(8, 2, 'b')
-    player1.getBoard().placeShip(8, 3, battleship)
-    interface1.addShip(8, 3, 'b')
-    player1.getBoard().placeShip(8, 4, battleship)
-    interface1.addShip(8, 4, 'b')
-
-    player1.getBoard().placeShip(3, 3, cruiser)
-    interface1.addShip(3, 3, 'r')
-    player1.getBoard().placeShip(4, 3, cruiser)
-    interface1.addShip(4, 3, 'r')
-    player1.getBoard().placeShip(5, 3, cruiser)
-    interface1.addShip(5, 3, 'r')
-
-    player1.getBoard().placeShip(2, 5, submarine)
-    interface1.addShip(2, 5, 's')
-    player1.getBoard().placeShip(2, 6, submarine)
-    interface1.addShip(2, 6, 's')
-    player1.getBoard().placeShip(2, 7, submarine)
-    interface1.addShip(2, 7, 's')
-
-    player1.getBoard().placeShip(6, 7, destroyer)
-    interface1.addShip(6, 7, 'd')
-    player1.getBoard().placeShip(7, 7, destroyer)
-    interface1.addShip(7, 7, 'd')
-    //player2 now
-    player2.getBoard().placeShip(1, 1, carrier2)
-    player2.getBoard().placeShip(2, 1, carrier2)
-    player2.getBoard().placeShip(3, 1, carrier2)
-    player2.getBoard().placeShip(4, 1, carrier2)
-    player2.getBoard().placeShip(5, 1, carrier2)
-
-    player2.getBoard().placeShip(8, 1, battleship2)
-    player2.getBoard().placeShip(8, 2, battleship2)
-    player2.getBoard().placeShip(8, 3, battleship2)
-    player2.getBoard().placeShip(8, 4, battleship2)
-
-    player2.getBoard().placeShip(3, 3, cruiser2)
-    player2.getBoard().placeShip(4, 3, cruiser2)
-    player2.getBoard().placeShip(5, 3, cruiser2)
-
-    player2.getBoard().placeShip(2, 5, submarine2)
-    player2.getBoard().placeShip(2, 6, submarine2)
-    player2.getBoard().placeShip(2, 7, submarine2)
-
-    player2.getBoard().placeShip(6, 7, destroyer2)
-    player2.getBoard().placeShip(7, 7, destroyer2)
-
-interface1.finishPlacement();
-initTargets();
-//update interface only when logical state changes, not in logic
-//place ship or target location with input
 function randomPlacement(player, ship, inter){
     let shipSpots = []
 
     while (!allLegal(shipSpots) || shipSpots.length === 0){
-        let placeDir = Math.floor(Math.random()*2);
+        let placeDir = Math.floor(Math.random()*4);
         shipSpots[0] = randomLegal()
+        
 
         if (placeDir === 0){
             for(let i = 1; i < ship.getLength(); i++){
-                shipSpots[i] = [shipSpots[0][0]+i, shipSpots[0][1]]
-                console.log()
+                shipSpots[i] = [shipSpots[0][0]+i, shipSpots[0][1]];
             }
-        } else {
+        } else if (placeDir === 1) {
             for(let i = 1; i < ship.getLength(); i++){
-                shipSpots[i] = [shipSpots[0][0], shipSpots[0][1]+i]
+                shipSpots[i] = [shipSpots[0][0], shipSpots[0][1]+i];
+            }
+        } else if (placeDir === 2){
+            for(let i = 1; i < ship.getLength(); i++){
+                shipSpots[i] = [shipSpots[0][0]-i, shipSpots[0][1]];
+            }
+        } else{
+            for(let i = 1; i < ship.getLength(); i++){
+                shipSpots[i] = [shipSpots[0][0], shipSpots[0][1]-i];
             }
         }
+        
     }
     for (let i = 0; i < shipSpots.length; i++){
-        player.getBoard().placeShip(shipSpots[i][0], shipSpots[i][1]);
+        player.getBoard().placeShip(shipSpots[i][0], shipSpots[i][1], ship);
         illegalSpots.push(shipSpots[i]);
-        inter.addShip(shipSpots[i][0], shipSpots[i][i], 'c')
+        if (inter) inter.addShip(shipSpots[i][0], shipSpots[i][1], ship.getName()[0])
     }
 }
 
@@ -155,7 +122,8 @@ function botBarrage(){
     if (options.getDifficulty() === 1) target = randomLegal();
     if (options.getDifficulty() === 2) target = mediumBotTargeting();
     if (options.getDifficulty() === 3) target = hardBotTargeting();
-    
+    illegalSpots.push(target);
+
     let result = player1.getBoard().receiveAttack(target[0], target[1]);
     if (result === undefined) interface1.missSelf(target[0], target[1]);
     else {
@@ -177,6 +145,9 @@ function botBarrage(){
 //         }
 // // }
 
+function resetIllegals() {
+    illegalSpots = [[-1, -1]];
+} 
 
 function isLegal(spot){
     if (JSON.stringify(illegalSpots).includes([spot[0], spot[1]])) return false;
@@ -198,7 +169,6 @@ function randomLegal(){
         x = Math.floor(Math.random()*10);
         y = Math.floor(Math.random()*10);
     }
-    illegalSpots.push([x, y]);
     return [x, y];
 }
 function mediumBotTargeting(){

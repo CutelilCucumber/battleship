@@ -48,6 +48,24 @@ export function drawBoard(name) {
             }
         }
         newContainer.appendChild(newBoard);
+        //initialize ship placement
+        let shipContainer = document.createElement("div");
+        shipContainer.id = _name+"Shipyard";
+        shipContainer.classList.add("shipyard");
+        newContainer.appendChild(shipContainer);
+
+        //create bottons for shipyard
+        let newButton = document.createElement('button');
+        newButton.id = _name+"ranButton";
+        newButton.classList.add("ranButton")
+        newButton.textContent = "Randomize"
+        shipContainer.appendChild(newButton)
+
+        newButton = document.createElement('button');
+        newButton.id = _name+"confButton";
+        newButton.classList.add("confButton")
+        newButton.textContent = "Confirm"
+        shipContainer.appendChild(newButton)
     }
 
     const addShip = (x, y, shipID) => {
@@ -61,6 +79,7 @@ export function drawBoard(name) {
             tile.classList.remove('placeable');
         });
         document.getElementById("opponentBoard").style.display = "grid";
+        document.getElementById(_name+"Shipyard").style.display = "none";
     }
 
     const hitOpponent = (x, y, sunkShip) => {
@@ -99,6 +118,15 @@ export function drawBoard(name) {
         targetTile.style.color = "white";
     }
 
+    const clearLetters = () => {
+        for(let i = 0; i < 10; i++){
+            for(let j = 0; j < 10; j++){
+                let tile = document.getElementById(j+""+i+_name)
+                tile.textContent = '';
+            }
+        }
+    }
+
     return {
         initialize,
         addShip,
@@ -106,7 +134,8 @@ export function drawBoard(name) {
         hitOpponent,
         missOpponent,
         hitSelf,
-        missSelf
+        missSelf,
+        clearLetters
         //showboard
         //hideboard
     }
