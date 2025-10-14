@@ -28,7 +28,8 @@ function startPlacement(){
     }
     
     interface1.initialize()
-    drag();
+    const draggable = drag();
+    draggable.initRotate();
     document.getElementById(name1+'ranButton').addEventListener('click', () => {
         player1.getBoard().clearBoard();
         resetIllegals();
@@ -41,6 +42,7 @@ function startPlacement(){
         resetIllegals();
         interface1.resetShipyard();
         interface1.clearLetters();
+        draggable.initRotate();
 
     });
     document.getElementById(name1+'confButton').addEventListener('click', endPlacement);

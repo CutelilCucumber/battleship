@@ -53,14 +53,19 @@ export function drawBoard(name) {
         }
         newContainer.appendChild(newBoard);
         //initialize ship placement
-        let shipContainer = document.createElement("div");
-        shipContainer.id = _name+"Shipyard";
-        shipContainer.classList.add("shipyard");
-        newContainer.appendChild(shipContainer);
+        let shipYard = document.createElement("div");
+        shipYard.id = _name+"Shipyard";
+        shipYard.classList.add("shipyard");
+        newContainer.appendChild(shipYard);
         newDiv = document.createElement("h3");
         newDiv.classList.add('shipsTitle')
-        newDiv.textContent = "Available Ships";
-        shipContainer.appendChild(newDiv);
+        newDiv.textContent = "Drag & drop! Middle-mouse to rotate.";
+        shipYard.appendChild(newDiv);
+
+        let shipContainer = document.createElement("div");
+        shipContainer.id = _name+"ShipContainer";
+        shipContainer.classList.add("shipContainer");
+        shipYard.appendChild(shipContainer);
 
         //add ships to shipyard
         let newShip = document.createElement('img');
@@ -121,7 +126,7 @@ export function drawBoard(name) {
         //create bottons for shipyard
         let buttContainer = document.createElement('span')
         buttContainer.classList.add('shipButtons')
-        shipContainer.appendChild(buttContainer)
+        shipYard.appendChild(buttContainer)
 
         let newButton = document.createElement('button');
         newButton.id = _name+"ranButton";
@@ -141,26 +146,6 @@ export function drawBoard(name) {
         newButton.textContent = "Confirm"
         buttContainer.appendChild(newButton)
 
-        document.querySelectorAll('.draggable').forEach(ship => {
-            ship.addEventListener('auxclick', (e) => {
-                if(e.button === 1){
-                    if (ship.src.includes('rotate')){
-                        ship.src = ship.src.replace('rotate', 'ship');
-                        ship.style.height = null;
-                        ship.style.width = null;
-                        ship.dataset.length = ship.dataset.width;
-                        ship.dataset.width = '1';
-                        
-                    } else {
-                        ship.src = ship.src.replace('ship', 'rotate');
-                        ship.style.width = 34*ship.dataset.length+'px';
-                        ship.style.height = '34px';
-                        ship.dataset.width = ship.dataset.length;
-                        ship.dataset.length = '1';
-                    }
-                }
-            })
-        })
     }
 
     const addShip = (x, y, shipID) => {
@@ -224,11 +209,16 @@ export function drawBoard(name) {
 
     const resetShipyard = () => {
         document.querySelectorAll('.ship').forEach(ship => {
-            document.getElementById(_name+'Shipyard').appendChild(ship);
+            document.getElementById(_name+'ShipContainer').appendChild(ship);
+            ship.classList.remove('dragging');
             ship.style.gridArea = null;
             ship.style.height = null;
             ship.style.width = null;
-            ship.src = ship.src.replace('rotate', 'ship')
+            if (ship.src.includes('rotate')){
+                ship.src = ship.src.replace('rotate', 'ship');
+                ship.dataset.length = ship.dataset.width;
+                ship.dataset.width = 1;
+            }
         })
     } 
 
