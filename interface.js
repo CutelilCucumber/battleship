@@ -1,150 +1,11 @@
-export function drawBoard(name) {
-    let _name = name;
+export function boardDisplay() {
+    const emptyBoardRef = document.querySelector('.gameBoard').cloneNode(true);
+    const fullDockRef = document.querySelector('.dock').cloneNode(true);
 
-    const initialize = () => {
-        let newContainer = document.createElement("div");
-        newContainer.id = _name+"Container"
-        newContainer.classList.add("boardContainer")
-        document.body.appendChild(newContainer)
-        //initialize opponent board
-        let newBoard = document.createElement("div");
-        let newDiv = document.createElement("h3");
-        newDiv.classList.add("boardTitle")
-        newDiv.id = "boardTitleOpponent";
-        newDiv.textContent = "Opponent's Board";
-        newBoard.appendChild(newDiv);
-        newBoard.classList.add("board")
-        newBoard.id = "opponentBoard";
-        for(let i = -1; i < 10; i++){
-            for(let j = -1; j < 10; j++){//populate l -> r: j:x/ i:y
-                newDiv = document.createElement("div");
-                if(i < 0) newDiv.textContent = j;
-                else if (j < 0) newDiv.textContent = i;
-                else newDiv.classList.add("target")
-                newDiv.classList.add("tile")
-                newDiv.id = j+""+i+"opponent";
-                newBoard.appendChild(newDiv);
-            }
-        }
-        newContainer.appendChild(newBoard);
-        //initialize player board
-        newBoard = document.createElement("div");
-        newDiv = document.createElement("h3");
-        newDiv.classList.add("boardTitle")
-        newDiv.id = "boardTitle"+_name;
-        newDiv.textContent = "Your Board";
-        newBoard.appendChild(newDiv);
-        newBoard.classList.add("board");
-        newBoard.id = _name+"Board";
-        for(let i = -1; i < 10; i++){
-            for(let j = -1; j < 10; j++){//populate l -> r: j:x/ i:y
-                newDiv = document.createElement("div");
-                if(i < 0) newDiv.textContent = j;
-                else if (j < 0) newDiv.textContent = i;
-                else newDiv.classList.add("droppable");
-                newDiv.classList.add("tile");
-                newDiv.id = j+""+i+_name;
-                newBoard.appendChild(newDiv);
-                newDiv.style.gridColumnStart = j+2;
-                newDiv.style.gridColumnEnd = j+3;
-                newDiv.style.gridRowStart = i+3;
-                newDiv.style.gridRowEnd = i+4;
-            }
-        }
-        newContainer.appendChild(newBoard);
-        //initialize ship placement
-        let shipYard = document.createElement("div");
-        shipYard.id = _name+"Shipyard";
-        shipYard.classList.add("shipyard");
-        newContainer.appendChild(shipYard);
-        newDiv = document.createElement("h3");
-        newDiv.classList.add('shipsTitle')
-        newDiv.textContent = "Drag & drop! Middle-mouse to rotate.";
-        shipYard.appendChild(newDiv);
-
-        let shipContainer = document.createElement("div");
-        shipContainer.id = _name+"ShipContainer";
-        shipContainer.classList.add("shipContainer");
-        shipYard.appendChild(shipContainer);
-
-        //add ships to shipyard
-        let newShip = document.createElement('img');
-        newShip.id = _name+"Carrier";
-        newShip.classList.add("carrier");
-        newShip.classList.add("ship");
-        newShip.classList.add("draggable");
-        newShip.draggable = 'true';
-        newShip.dataset.width = 1;
-        newShip.dataset.length = 5;
-        newShip.src = "assets/shipCarrier.png";
-        shipContainer.appendChild(newShip);
-
-        newShip = document.createElement('img');
-        newShip.id = _name+"Battleship";
-        newShip.classList.add("battleship");
-        newShip.classList.add("ship");
-        newShip.classList.add("draggable");
-        newShip.draggable = 'true';
-        newShip.dataset.width = 1;
-        newShip.dataset.length = 4;
-        newShip.src = "assets/shipBattleship.png";
-        shipContainer.appendChild(newShip);
-
-        newShip = document.createElement('img');
-        newShip.id = _name+"Destroyer";
-        newShip.classList.add("destroyer");
-        newShip.classList.add("ship");
-        newShip.classList.add("draggable");
-        newShip.draggable = 'true';
-        newShip.dataset.width = 1;
-        newShip.dataset.length = 3;
-        newShip.src = "assets/shipDestroyer.png";
-        shipContainer.appendChild(newShip);
-
-        newShip = document.createElement('img');
-        newShip.id = _name+"Submarine";
-        newShip.classList.add("submarine");
-        newShip.classList.add("ship");
-        newShip.classList.add("draggable");
-        newShip.draggable = 'true';
-        newShip.dataset.width = 1;
-        newShip.dataset.length = 3;
-        newShip.src = "assets/shipSub.png";
-        shipContainer.appendChild(newShip);
-
-        newShip = document.createElement('img');
-        newShip.id = _name+"PatrolBoat";
-        newShip.classList.add("patrolBoat");
-        newShip.classList.add("ship");
-        newShip.classList.add("draggable");
-        newShip.draggable = 'true';
-        newShip.dataset.width = 1;
-        newShip.dataset.length = 2;
-        newShip.src = "assets/shipPatrol.png";
-        shipContainer.appendChild(newShip);
-
-        //create bottons for shipyard
-        let buttContainer = document.createElement('span')
-        buttContainer.classList.add('shipButtons')
-        shipYard.appendChild(buttContainer)
-
-        let newButton = document.createElement('button');
-        newButton.id = _name+"ranButton";
-        newButton.classList.add("ranButton")
-        newButton.textContent = "Random"
-        buttContainer.appendChild(newButton)
-
-        newButton = document.createElement('button');
-        newButton.id = _name+"clearButton";
-        newButton.classList.add("clearButton")
-        newButton.textContent = "Clear"
-        buttContainer.appendChild(newButton)
-
-        newButton = document.createElement('button');
-        newButton.id = _name+"confButton";
-        newButton.classList.add("confButton")
-        newButton.textContent = "Confirm"
-        buttContainer.appendChild(newButton)
+    const startPlacement = () => {
+        document.querySelector('main').classList.add('visible');
+        document.querySelector('main').style.display = 'flex';
+        document.querySelector('.gameBoard').classList.add('board1');
 
     }
 
@@ -223,7 +84,7 @@ export function drawBoard(name) {
     } 
 
     return {
-        initialize,
+        startPlacement,
         addShip,
         finishPlacement,
         hitOpponent,
@@ -238,7 +99,9 @@ export function drawBoard(name) {
 }
 
 export function menuOptions(){
-    let _difficulty = 1
+    let _difficulty = 1;
+    let _player1Name = document.querySelector('.p1Name');
+    let _player2Name = document.querySelector('.p2Name');
     document.getElementById('singleOption').style.backgroundColor = 'lightblue';
     document.getElementById('easy').style.backgroundColor = 'lightblue';
 
@@ -247,6 +110,8 @@ export function menuOptions(){
         document.getElementById('singleOption').addEventListener('click', function(e){
             _difficulty = 1;
             e.target.style.backgroundColor = "lightblue";
+            _player1Name.style.display = 'none';
+            _player2Name.style.display = 'none';
             document.getElementById('multiOption')
                 .style.backgroundColor = null;
             document.querySelectorAll(".difficulty").forEach(option => {
@@ -279,24 +144,37 @@ export function menuOptions(){
         document.getElementById('multiOption').addEventListener('click', function(e){
             _difficulty = 0;
             e.target.style.backgroundColor = "lightblue";
+            _player1Name.style.display = 'block';
+            _player2Name.style.display = 'block';
             document.getElementById('singleOption')
                 .style.backgroundColor = null;
             document.querySelectorAll(".difficulty").forEach(option => {
                 option.style.display = 'none';
             })
         });
-        document.getElementById('start').addEventListener('click', function(e){
-                document.querySelectorAll(".option").forEach(option => {
-                    option.style.display = 'none';
-            })
-        });
+        document.getElementById('start').addEventListener('click', function(){
+                document.querySelector('nav').style.display = 'none';
+                if (_player1Name.value === '') _player1Name = 'Player1'
+                else _player1Name = _player1Name.value;
+                if (_difficulty === 0){
+                    if (_player2Name.value === '') _player2Name = 'Player2';
+                    else _player2Name = _player2Name.value;
+                } else _player2Name = 'Computer';
+            });
+        
     } 
 
     const getDifficulty = () => {
         return _difficulty;
     }
+
+    const getPlayerNames = () => {
+        return [_player1Name, _player2Name]
+    }
+
     return {
         initialize,
-        getDifficulty
+        getDifficulty,
+        getPlayerNames
     }
 }

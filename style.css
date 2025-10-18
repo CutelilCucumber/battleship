@@ -1,3 +1,30 @@
+body {
+    margin: 0;
+    background-color: rgb(0, 10, 0);
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    text-shadow: 0 0 5px white, 0 0 10px whitesmoke;
+    font-weight: 400;
+}
+.dot {
+    color: rgb(1, 156, 1);
+    background-color: rgb(0, 10, 0);
+    text-shadow: 0 0 5px rgb(0, 168, 0), 0 0 10px rgb(9, 204, 42);
+    font-weight: 200;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    border: 1px dashed rgb(28, 243, 0);
+    letter-spacing: 1rem;
+    text-indent: .6rem;
+}
+
 button {
     background-color: white;
 }
@@ -5,8 +32,7 @@ button {
 button:hover {
     background-color: lightblue;
 }
-
-.options {
+nav {
     display: grid;
     grid-template-rows: 1fr, 1fr, 1fr, 1fr;
     grid-template-columns: 1fr, 1fr;
@@ -28,15 +54,37 @@ button:hover {
     grid-row: 2/5;
 }
 
-.boardContainer {
-    display: flex;
+nav > input {
+    display: none;
+}
+
+main {
+    margin-top: 2em;
+    display: none;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 2em;
+    animation: appear .5s 1;
 }
 
-.board {
+@keyframes appear {
+    from{
+        transform: scaleY(0%) scaleX(50%);
+        opacity: 0%;
+    }
+    40% { 
+        transform: scaleY(1%) scaleX(100%);
+    }
+    85% {
+        transform: scale(100%);
+        opacity: 100%;
+    }
+    to {
+        opacity: 90%;
+    }
+}
+
+.gameBoard {
     width: 400px;
     height: 400px;
     display: grid;
@@ -44,13 +92,31 @@ button:hover {
     grid-template-rows: repeat(12, 1fr);
 }
 
-.tile {
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
-    text-align: center;
-    font: 1.8em sans-serif;
-    background-image: url("./assets/waterTile.gif");
-    background-size: cover;
+.gameBoard > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-bottom: 1px dashed rgb(28, 243, 0);
+    border-right: 1px dashed rgb(28, 243, 0);
+    font: 1.2em sans-serif;
+}
+
+.dock {
+    padding: .8em;
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    gap: .5em;
+    align-items: center;
+    justify-content: space-evenly;
+
+    border: dashed rgb(28, 243, 0) 2px;
+}
+
+.dock > div {
+    display: flex;
+    gap: 2em;
 }
 
 .boardTitle {
@@ -66,17 +132,6 @@ button:hover {
     display: none;
 }
 
-.shipyard {
-    margin-top: 1em;
-    width: 360px;
-    gap: .5em;
-    justify-content: space-evenly;
-    background-color: beige;
-    display: grid;
-    grid-template-columns: repeat(8, 35px);
-    grid-template-rows: repeat(10, 35px);
-    border: dashed black 2px;
-}
 .shipContainer {
     grid-column: 1/-1;
     grid-row: 2/9;
@@ -92,39 +147,24 @@ button:hover {
     text-align: center;
 }
 .carrier {
-    width: 34px;
-    height: 170px;
-    /* background-image: url("assets/ships/ShipCarrierHull.png");
-    background-size: 100% 90%;
-    background-repeat: no-repeat; */
+    height: 34px;
+    width: 170px;
 }
 .battleship {
-    width: 34px;
-    height: 136px;
-    /* background-image: url("assets/ships/ShipBattleshipHull.png");
-    background-size: 90% 100%;
-    background-repeat: no-repeat; */
+    height: 34px;
+    width: 136px;
+}
+.cruiser {
+    height: 34px;
+    width: 102px;
+}
+.sub {
+    height: 34px;
+    width: 102px;
 }
 .destroyer {
-    width: 34px;
-    height: 102px;
-    /* background-image: url("assets/ships/ShipDestroyerHull.png");
-    background-size: 80% 100%;
-    background-repeat: no-repeat; */
-}
-.submarine {
-    width: 34px;
-    height: 102px;
-    /* background-image: url("assets/ships/ShipSubMarineHull.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat; */
-}
-.patrolBoat {
-    width: 34px;
-    height: 68px;
-    /* background-image: url("assets/ships/ShipPatrolHull.png");
-    background-size: 75% 100%;
-    background-repeat: no-repeat; */
+    height: 34px;
+    width: 68px;
 }
 .shipButtons {
     grid-column: 1/-1;
@@ -133,4 +173,23 @@ button:hover {
 }
 .dragging {
     opacity: .8;
+}
+#radar {
+   position: fixed;
+    width: 200vw;
+    height: 200px;
+    background-image: linear-gradient(to bottom, rgba(0, 255, 0, 0), rgb(0, 255, 0, .5));
+    border-bottom: solid rgb(0, 255, 0) 10px;
+    top: -210px;
+    left: -200px;
+    transform-origin: bottom left;
+    animation: spinning 6s infinite linear;
+}
+@keyframes spinning{
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(1turn);
+    }
 }

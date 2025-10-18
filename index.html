@@ -6,19 +6,158 @@
     <title>Battleship!</title>
     <script type="module" src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <span id="header">
-        <h1>Battleship!</h1>
-    </span>
-    <div class="options">
+    <header>
+        <h1>>battleship</h1>
+    </header>
+    <nav>
         <button class="option" id="singleOption">Single-Player</button>
         <button class="option" id="multiOption">2-Player</button>
         <button class="option difficulty" id="easy">Easy</button>
         <button class="option difficulty" id="medium">Medium</button>
         <button class="option difficulty" id="hard">Hard</button>
         <button class="option" id="start">Start!</button>
-    </div>
-    
+        <input class="option p1Name" type="text" placeholder="Enter Player 1 Name Here">
+        <input class="option p2Name" type="text" placeholder="Enter Player 2 Name Here">
+    </nav>
+    <main>
+        <span class="boardTitle"></span>
+        <div class="gameBoard">
+            <div></div>
+            <div>a</div>
+            <div>b</div>
+            <div>c</div>
+            <div>d</div>
+            <div>e</div>
+            <div>f</div>
+            <div>g</div>
+            <div>h</div>
+            <div>i</div>
+            <div>j</div>
+            <div>0</div>
+            <div tabindex="0" class="playable 0a"></div>
+            <div tabindex="0" class="playable 0b"></div>
+            <div tabindex="0" class="playable 0c"></div>
+            <div tabindex="0" class="playable 0d"></div>
+            <div tabindex="0" class="playable 0e"></div>
+            <div tabindex="0" class="playable 0f"></div>
+            <div tabindex="0" class="playable 0g"></div>
+            <div tabindex="0" class="playable 0h"></div>
+            <div tabindex="0" class="playable 0i"></div>
+            <div tabindex="0" class="playable 0j"></div>
+            <div>1</div>
+            <div tabindex="0" class="playable 1a"></div>
+            <div tabindex="0" class="playable 1b"></div>
+            <div tabindex="0" class="playable 1c"></div>
+            <div tabindex="0" class="playable 1d"></div>
+            <div tabindex="0" class="playable 1e"></div>
+            <div tabindex="0" class="playable 1f"></div>
+            <div tabindex="0" class="playable 1g"></div>
+            <div tabindex="0" class="playable 1h"></div>
+            <div tabindex="0" class="playable 1i"></div>
+            <div tabindex="0" class="playable ij"></div>
+            <div>2</div>
+            <div tabindex="0" class="playable 2a"></div>
+            <div tabindex="0" class="playable 2b"></div>
+            <div tabindex="0" class="playable 2c"></div>
+            <div tabindex="0" class="playable 2d"></div>
+            <div tabindex="0" class="playable 2e"></div>
+            <div tabindex="0" class="playable 2f"></div>
+            <div tabindex="0" class="playable 2g"></div>
+            <div tabindex="0" class="playable 2h"></div>
+            <div tabindex="0" class="playable 2i"></div>
+            <div tabindex="0" class="playable 2j"></div>
+            <div>3</div>
+            <div tabindex="0" class="playable 3a"></div>
+            <div tabindex="0" class="playable 3b"></div>
+            <div tabindex="0" class="playable 3c"></div>
+            <div tabindex="0" class="playable 3d"></div>
+            <div tabindex="0" class="playable 3e"></div>
+            <div tabindex="0" class="playable 3f"></div>
+            <div tabindex="0" class="playable 3g"></div>
+            <div tabindex="0" class="playable 3h"></div>
+            <div tabindex="0" class="playable 3i"></div>
+            <div tabindex="0" class="playable 3j"></div>
+            <div>4</div>
+            <div tabindex="0" class="playable 4a"></div>
+            <div tabindex="0" class="playable 4b"></div>
+            <div tabindex="0" class="playable 4c"></div>
+            <div tabindex="0" class="playable 4d"></div>
+            <div tabindex="0" class="playable 4e"></div>
+            <div tabindex="0" class="playable 4f"></div>
+            <div tabindex="0" class="playable 4g"></div>
+            <div tabindex="0" class="playable 4h"></div>
+            <div tabindex="0" class="playable 4i"></div>
+            <div tabindex="0" class="playable 4j"></div>
+            <div>5</div>
+            <div tabindex="0" class="playable 5a"></div>
+            <div tabindex="0" class="playable 5b"></div>
+            <div tabindex="0" class="playable 5c"></div>
+            <div tabindex="0" class="playable 5d"></div>
+            <div tabindex="0" class="playable 5e"></div>
+            <div tabindex="0" class="playable 5f"></div>
+            <div tabindex="0" class="playable 5g"></div>
+            <div tabindex="0" class="playable 5h"></div>
+            <div tabindex="0" class="playable 5i"></div>
+            <div tabindex="0" class="playable 5j"></div>
+            <div>6</div>
+            <div tabindex="0" class="playable 6a"></div>
+            <div tabindex="0" class="playable 6b"></div>
+            <div tabindex="0" class="playable 6c"></div>
+            <div tabindex="0" class="playable 6d"></div>
+            <div tabindex="0" class="playable 6e"></div>
+            <div tabindex="0" class="playable 6f"></div>
+            <div tabindex="0" class="playable 6g"></div>
+            <div tabindex="0" class="playable 6h"></div>
+            <div tabindex="0" class="playable 6i"></div>
+            <div tabindex="0" class="playable 6j"></div>
+            <div>7</div>
+            <div tabindex="0" class="playable 7a"></div>
+            <div tabindex="0" class="playable 7b"></div>
+            <div tabindex="0" class="playable 7c"></div>
+            <div tabindex="0" class="playable 7d"></div>
+            <div tabindex="0" class="playable 7e"></div>
+            <div tabindex="0" class="playable 7f"></div>
+            <div tabindex="0" class="playable 7g"></div>
+            <div tabindex="0" class="playable 7h"></div>
+            <div tabindex="0" class="playable 7i"></div>
+            <div tabindex="0" class="playable 7j"></div>
+            <div>8</div>
+            <div tabindex="0" class="playable 8a"></div>
+            <div tabindex="0" class="playable 8b"></div>
+            <div tabindex="0" class="playable 8c"></div>
+            <div tabindex="0" class="playable 8d"></div>
+            <div tabindex="0" class="playable 8e"></div>
+            <div tabindex="0" class="playable 8f"></div>
+            <div tabindex="0" class="playable 8g"></div>
+            <div tabindex="0" class="playable 8h"></div>
+            <div tabindex="0" class="playable 8i"></div>
+            <div tabindex="0" class="playable 8j"></div>
+            <div>9</div>
+            <div tabindex="0" class="playable 9a"></div>
+            <div tabindex="0" class="playable 9b"></div>
+            <div tabindex="0" class="playable 9c"></div>
+            <div tabindex="0" class="playable 9d"></div>
+            <div tabindex="0" class="playable 9e"></div>
+            <div tabindex="0" class="playable 9f"></div>
+            <div tabindex="0" class="playable 9g"></div>
+            <div tabindex="0" class="playable 9h"></div>
+            <div tabindex="0" class="playable 9i"></div>
+            <div tabindex="0" class="playable 9j"></div>
+            
+        </div>
+        <div class="dock">
+            <span>Available ships: Click to rotate</span>
+            <div class="shipLabel carrierLabel">Aircraft Carrier:<div class="carrier dot draggable">◉◉◉◉◉</div></div>
+            <div class="shipLabel battleshipLabel">Battleship:<div class="battleship dot draggable">◉◉◉◉</div></div>
+            <div class="shipLabel cruiserLabel">Cruiser:<div class="cruiser dot draggable">◉◉◉</div></div>
+            <div class="shipLabel subLabel">Submarine:<div class="sub dot draggable">◉◉◉</div></div>
+            <div class="shipLabel destroyerLabel">Destroyer:<div class="destroyer dot draggable">◉◉</div></div>
+            <div class="dockbuttons"><button>Random</button><button>Clear</button><button>Confirm</button></div>
+        </div>
+    </main>
+    <div id="radar" class="visual"></div>
 </body>
 </html>
