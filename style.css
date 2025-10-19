@@ -6,12 +6,16 @@ body {
 }
 
 h1 {
+    margin-left: 1em;
     font-family: 'Roboto', sans-serif;
     color: white;
     text-shadow: 0 0 5px white, 0 0 10px whitesmoke;
     font-weight: 400;
 }
-.dot {
+.ship, .shipLabel {
+    transition: transform 1s ease-in;
+}
+.ship {
     color: rgb(1, 156, 1);
     background-color: rgb(0, 10, 0);
     text-shadow: 0 0 5px rgb(0, 168, 0), 0 0 10px rgb(9, 204, 42);
@@ -22,7 +26,43 @@ h1 {
     text-align: center;
     border: 1px dashed rgb(28, 243, 0);
     letter-spacing: 1rem;
-    text-indent: .6rem;
+    text-indent: .65rem;
+}
+.dropped {
+    color: white;
+}
+.preVertical {
+    transform-origin: 10% 0;
+    transform: rotate(90deg);
+}
+.carrierLabel:has(.preVertical) {
+    transform: translateX(170px)
+}
+
+.gameBoard > .horizontal {
+    color: rgb(1, 156, 1);
+    text-shadow: 0 0 5px rgb(0, 168, 0), 0 0 10px rgb(9, 204, 42);
+    border-right: 0px;
+}
+.gameBoard > .stern {
+    color: rgb(1, 156, 1);
+    text-shadow: 0 0 5px rgb(0, 168, 0), 0 0 10px rgb(9, 204, 42);
+    border-right: 1px dashed rgb(28, 243, 0);
+    border-bottom: 1px dashed rgb(28, 243, 0);
+}
+.gameBoard > .vertical {
+    color: rgb(1, 156, 1);
+    text-shadow: 0 0 5px rgb(0, 168, 0), 0 0 10px rgb(9, 204, 42);
+    border-bottom: 0px;
+}
+.hit {
+    color: red !important;
+}
+.miss {
+    color: red !important;
+}
+.draggable {
+    cursor: grab;
 }
 
 button {
@@ -30,7 +70,7 @@ button {
 }
 
 button:hover {
-    background-color: lightblue;
+    background-color: lightgreen;
 }
 nav {
     display: grid;
@@ -71,9 +111,11 @@ main {
     from{
         transform: scaleY(0%) scaleX(50%);
         opacity: 0%;
+        box-shadow: 0 0 100px rgb(28, 243, 0);
     }
     40% { 
         transform: scaleY(1%) scaleX(100%);
+        box-shadow: 0 0 100px rgba(28, 243, 0, .60);
     }
     85% {
         transform: scale(100%);
@@ -89,7 +131,10 @@ main {
     height: 400px;
     display: grid;
     grid-template-columns: repeat(11, 1fr);
-    grid-template-rows: repeat(12, 1fr);
+    grid-template-rows: repeat(11, 1fr);
+}
+.board2 {
+    display: none;
 }
 
 .gameBoard > div {
@@ -117,6 +162,7 @@ main {
 .dock > div {
     display: flex;
     gap: 2em;
+    height: 35px;
 }
 
 .boardTitle {
@@ -146,26 +192,7 @@ main {
     grid-column-end: -1;
     text-align: center;
 }
-.carrier {
-    height: 34px;
-    width: 170px;
-}
-.battleship {
-    height: 34px;
-    width: 136px;
-}
-.cruiser {
-    height: 34px;
-    width: 102px;
-}
-.sub {
-    height: 34px;
-    width: 102px;
-}
-.destroyer {
-    height: 34px;
-    width: 68px;
-}
+
 .shipButtons {
     grid-column: 1/-1;
     display: flex;
@@ -173,18 +200,21 @@ main {
 }
 .dragging {
     opacity: .8;
+    cursor: grabbing;
 }
 #radar {
    position: fixed;
     width: 200vw;
     height: 200px;
-    background-image: linear-gradient(to bottom, rgba(0, 255, 0, 0), rgb(0, 255, 0, .5));
-    border-bottom: solid rgb(0, 255, 0) 10px;
+    background-image: linear-gradient(to bottom, rgba(0, 255, 0, 0), rgb(0, 255, 0, .3));
+    border-bottom: solid rgba(0, 255, 0, .6) 10px;
     top: -210px;
     left: -200px;
     transform-origin: bottom left;
     animation: spinning 6s infinite linear;
+    z-index: -1;
 }
+
 @keyframes spinning{
     from {
         transform: rotate(0);

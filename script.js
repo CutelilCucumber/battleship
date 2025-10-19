@@ -1,6 +1,5 @@
 import { Ship, Player, decimalHash } from "./shipyard.js";
-import { boardDisplay, menuOptions } from "./interface.js";
-import { drag } from "./drag.js";
+import { boardDisplay, menuOptions, dragPlace } from "./interface.js";
 
 const options = menuOptions();
 const display = boardDisplay();
@@ -10,4 +9,5 @@ document.getElementById('start').addEventListener('click', startGame);
 
 function startGame() {
     display.startPlacement();
+    dragPlace()
 }

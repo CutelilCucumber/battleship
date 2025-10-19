@@ -149,16 +149,16 @@ export function Player(playerName){
 
 export function decimalHash(num){
         switch (num) {
-            case 0: return 'a';
-            case 1: return 'b';
-            case 2: return 'c';
-            case 3: return 'd';
-            case 4: return 'e';
-            case 5: return 'f';
-            case 6: return 'g';
-            case 7: return 'h';
-            case 8: return 'i';
-            case 9: return 'k';
+            case 0 || '0': return 'a';
+            case 1 || '1': return 'b';
+            case 2 || '2': return 'c';
+            case 3 || '3': return 'd';
+            case 4 || '4': return 'e';
+            case 5 || '5': return 'f';
+            case 6 || '6': return 'g';
+            case 7 || '7': return 'h';
+            case 8 || '8': return 'i';
+            case 9 || '9': return 'j';
 
             case 'a': return 0;
             case 'b': return 1;
@@ -169,7 +169,7 @@ export function decimalHash(num){
             case 'g': return 6;
             case 'h': return 7;
             case 'i': return 8;
-            case 'k': return 9;
-            default: throw new Error('Enter a letter a-k or number 1-9');
+            case 'j': return 9;
+            default: throw new Error('Enter a letter a- or number 1-9');
         }
     }
