@@ -1,122 +1,59 @@
-import { decimalHash } from "./shipyard.js";
+import { decimalHash, ranUnhashedCoords } from "./shipyard.js";
 
 export function boardDisplay() {
-    const emptyBoardRef = document.querySelector('.gameBoard').cloneNode(true);
+    let p1Board = document.querySelector('.gameBoard');
+    let p2Board = p1Board.cloneNode(true);
+    let _activeBoard = p1Board;//reference to working board
+    let _inactiveBoard = p2Board;
 
-    let _unconfirmedShips = []
+    const _cloneBoard = document.querySelector('.gameBoard').cloneNode(true);
+    const _cloneDock = document.querySelector('.dock').cloneNode(true);
+    
+    function cloneBoard() {
+        return _cloneBoard.cloneNode(true);
+    }
+    function cloneDock() {
+        return _cloneDock.cloneNode(true);
+    }
 
-    const startPlacement = (board) => {
-        document.querySelector('main').classList.add('visible');
+    const startPlacement = () => {
         document.querySelector('main').style.display = 'flex';
-        document.querySelector('.gameBoard').classList.add('board1');
-        fixGrid(document.querySelector('.gameBoard'))
+    }
+
+    const flipInterface = () => {
+        [_activeBoard, _inactiveBoard] = [_inactiveBoard, _activeBoard];
+        _inactiveBoard.classList.remove('visible');
+        document.querySelector('.gameBoard').replaceWith(_activeBoard)
+        _activeBoard.classList.add('visible');
 
     }
 
-    function fixGrid(board){//input parent board
-        document.querySelectorAll('.playable').forEach(tile => {
-            let x = Number(decimalHash(tile.className[0]));
-            let y = Number(tile.className[1]);
+    const resetBoard = (init) => {
+        const newBoard = cloneBoard();
+        const newDock = cloneDock();
 
-            let colStart = x+2;
-            let colEnd = x+3;
-            let rowStart = y+2;
-            let rowEnd = y+3;
+        document.querySelector('.gameBoard').replaceWith(newBoard);
+        document.querySelector('.dock').replaceWith(newDock);
 
-            tile.style.gridColumnStart = colStart;
-            tile.style.gridColumnEnd = colEnd;
-            tile.style.gridRowStart = rowStart;
-            tile.style.gridRowEnd = rowEnd;
-        });
+        _activeBoard = newBoard;
     }
 
-
-    const finishPlacement = () => {
-        document.querySelectorAll('droppable').forEach(tile => {
-            tile.classList.remove('droppable');
-        });
-        document.getElementById("opponentBoard").style.display = "grid";
-        document.getElementById(_name+"Shipyard").style.display = "none";
+    const updateText = (str) => {
+        document.querySelector('.mainDisplay').textContent = str;
     }
-
-    const hitOpponent = (x, y, sunkShip) => {
-        let targetTile = document.getElementById(x+''+y+'opponent');
-        targetTile.textContent = "X";
-        targetTile.style.color = "red";
-        targetTile.classList.remove("target");
-
-        if (sunkShip){
-            document.getElementById('boardTitleOpponent')
-                .textContent = "Enemy "+sunkShip+" sunk!";
-        }
-    }
-
-    const missOpponent = (x, y) => {
-        let targetTile = document.getElementById(x+''+y+'opponent');
-        targetTile.textContent = "X";
-        targetTile.style.color = "white";
-        targetTile.classList.remove("target");
-    }
-
-    const hitSelf = (x, y, sunkShip) => {
-        let targetTile = document.getElementById(x+''+y+_name);
-        targetTile.textContent = "X";
-        targetTile.style.color = "red";
-
-        if (sunkShip){
-            document.getElementById('boardTitle'+_name)
-                .textContent = "Your "+sunkShip+" was sunk!";
-        }
-    }
-
-    const missSelf = (x, y) => {
-        let targetTile = document.getElementById(x+''+y+_name);
-        targetTile.textContent = "X";
-        targetTile.style.color = "white";
-    }
-
-    const clearLetters = () => {
-        for(let i = 0; i < 10; i++){
-            for(let j = 0; j < 10; j++){
-                let tile = document.getElementById(j+""+i+_name)
-                tile.textContent = '';
-            }
-        }
-    }
-
-    const resetShipyard = () => {
-        document.querySelectorAll('.ship').forEach(ship => {
-            document.getElementById(_name+'ShipContainer').appendChild(ship);
-            ship.classList.remove('dragging');
-            ship.style.gridArea = null;
-            ship.style.height = null;
-            ship.style.width = null;
-            if (ship.src.includes('rotate')){
-                ship.src = ship.src.replace('rotate', 'ship');
-                ship.dataset.length = ship.dataset.width;
-                ship.dataset.width = 1;
-            }
-        })
-    } 
 
     return {
         startPlacement,
-        finishPlacement,
-        hitOpponent,
-        missOpponent,
-        hitSelf,
-        missSelf,
-        clearLetters,
-        resetShipyard
-        //showboard
-        //hideboard
+        flipInterface,
+        resetBoard,
+        updateText
     }
 }
 
 export function menuOptions(){
     let _difficulty = 1;
-    let _player1Name = document.querySelector('.p1Name');
-    let _player2Name = document.querySelector('.p2Name');
+    let _player1Input = document.querySelector('.p1Name');
+    let _player2Input = document.querySelector('.p2Name');
     document.getElementById('singleOption').style.backgroundColor = 'lightgreen';
     document.getElementById('easy').style.backgroundColor = 'lightgreen';
 
@@ -125,8 +62,8 @@ export function menuOptions(){
         document.getElementById('singleOption').addEventListener('click', function(e){
             _difficulty = 1;
             e.target.style.backgroundColor = "lightgreen";
-            _player1Name.style.display = 'none';
-            _player2Name.style.display = 'none';
+            _player1Input.style.display = 'none';
+            _player2Input.style.display = 'none';
             document.getElementById('multiOption')
                 .style.backgroundColor = null;
             document.querySelectorAll(".difficulty").forEach(option => {
@@ -159,8 +96,8 @@ export function menuOptions(){
         document.getElementById('multiOption').addEventListener('click', function(e){
             _difficulty = 0;
             e.target.style.backgroundColor = "lightgreen";
-            _player1Name.style.display = 'block';
-            _player2Name.style.display = 'block';
+            _player1Input.style.display = 'block';
+            _player2Input.style.display = 'block';
             document.getElementById('singleOption')
                 .style.backgroundColor = null;
             document.querySelectorAll(".difficulty").forEach(option => {
@@ -168,13 +105,16 @@ export function menuOptions(){
             })
         });
         document.getElementById('start').addEventListener('click', function(){
+             
                 document.querySelector('nav').style.display = 'none';
-                if (_player1Name.value === '') _player1Name = 'Player1'
-                else _player1Name = _player1Name.value;
+                if (_player1Input.value === '') _player1Input.value = 'Player';
                 if (_difficulty === 0){
-                    if (_player2Name.value === '') _player2Name = 'Player2';
-                    else _player2Name = _player2Name.value;
-                } else _player2Name = 'Computer';
+                    if (_player2Input.value === '') {
+                        if (_player1Input.value === '') _player1Input.value = 'Player1';
+                        _player2Input.value = 'Player2';
+                    }
+                } else _player2Input.value = 'Computer';
+                
             });
         
     } 
@@ -184,7 +124,7 @@ export function menuOptions(){
     }
 
     const getPlayerNames = () => {
-        return [_player1Name, _player2Name]
+        return [_player1Input.value, _player2Input.value]
     }
 
     return {
@@ -205,9 +145,26 @@ export function dragPlace(){
     _draggables.forEach(draggable => {//start of drag
         draggable.addEventListener('dragstart', dragStart)
 
-        draggable.addEventListener('dragend', (e) => {//end of drag
+        draggable.addEventListener('dragend', dropShip)
+    })
+    _droppables.forEach(droppable => {//hover over
+        droppable.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            _dropOrigin = [decimalHash(droppable.className[0]), Number(droppable.className[1])];
+        })
+    })
+    _draggables.forEach(ship => {
+            ship.addEventListener('auxclick', rotateShip)
+        })
+
+    function dropShip(){//end of drag
             const dragging = document.querySelector('.dragging');
-            _shipName = dragging.classList[0];
+            try {
+                _shipName = dragging.classList[0];
+            } catch (error) {
+                throw new Error ('Ship does not exist');
+            };
+            
 
             let width = dragging.dataset.width;
             let height = dragging.dataset.height;
@@ -235,7 +192,6 @@ export function dragPlace(){
                     }
                 }
             }
-            console.log(shipTiles)
 
             if(checkAvailability(shipTiles) === false) {
                 dragging.classList.remove('dragging');
@@ -247,31 +203,18 @@ export function dragPlace(){
                 tile.push(_shipName);
                 _totalCoordinates.push(tile);
             };
-            console.log(_totalCoordinates);
 
-            dragging.removeEventListener('click', rotateShip)
+            dragging.removeEventListener('dragstart', dragStart)
             dragging.removeEventListener('auxclick', rotateShip)
             dragging.classList.add('dropped');
             dragging.classList.remove('draggable');
             dragging.classList.remove('dragging');
-        })
-    })
-    _droppables.forEach(droppable => {//hover over
-        droppable.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            _dropOrigin = [decimalHash(droppable.className[0]), Number(droppable.className[1])];
-        })
-    })
-    _draggables.forEach(ship => {
-            ship.addEventListener('auxclick', rotateShip)
-        })
-    
+        }
 
     function rotateShip(e) {
         if (e.button === 1) {
             let ship = e.target;
             
-
             if (_orientation === 'horizontal'){
                  _orientation = 'vertical';
                  ship.classList.add('preVertical');
@@ -296,11 +239,10 @@ export function dragPlace(){
         for (let coord of coordArr) {
             let x = decimalHash(coord[0]);
             let y = coord[1];
-            console.log('.'+x+y)
 
             if(document.querySelector('.'+x+y).textContent !== '') return false;
         };
-        return true
+        return true;
     }
 
     function displayPosition(coordArr){
@@ -318,4 +260,40 @@ export function dragPlace(){
 
         });
     }
+    const getTotalCoordinates = () => {
+        return _totalCoordinates;
+    }
+    document.getElementById('randomButton').addEventListener('click', randomPlacement);
+
+    function randomPlacement(){
+        document.querySelectorAll('.draggable').forEach(ship => {
+            if (Math.floor(Math.random()*2) === 1){
+                rotateShip({
+                    target: ship,
+                    button: 1
+                })
+            }
+            randomAttempt(ship);
+            _orientation = 'horizontal';
+        })
+    }
+    function randomAttempt(ship){
+        let attempts = 0;
+        let maxAttempts = 10;
+            while(attempts < maxAttempts){
+                ship.classList.add('dragging')
+                _dropOrigin = ranUnhashedCoords();
+                try {
+                    return dropShip();
+                } catch (error) {
+                    attempts++;
+                    console.warn(_dropOrigin+' '+error);
+                }
+            }
+            throw new Error(`Function failed after ${maxAttempts} attempts`);
+    }
+    return {
+        getTotalCoordinates
+    };
+
 }

@@ -1,3 +1,5 @@
 return function bot(){
-    let _illegalspots = [];
+    let _shotHistory = [];
+
+    
 }

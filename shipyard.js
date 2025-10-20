@@ -1,15 +1,13 @@
 export function Gameboard(){
     const _board = initBoard();
     let _fleet = [];
-    let _shipSpots = [];
-    let _interfaceRef = null;
 
     function initBoard() {
         let arr = [];
         for(let i = 0; i < 10; i++) {
             arr[i] = []
             for(let j = 0; j < 10; j++) {
-                arr[i][j] = i+decimalHash(j)+'Ocean';
+                arr[i][j] = i+''+j+'Ocean';
             }
         }
         
@@ -26,20 +24,17 @@ export function Gameboard(){
     }
 
     const placeShip = (x, y, ship) => {
-        if (typeof(y) !== 'number') y = decimalHash(y);
         //ship placing phase is before targeting, board spot will never be "miss"
         if (x > 9 || y > 9) throw new Error("Target is out of bounds.")
         if (!Object.hasOwn(ship, 'isSunk')) throw new Error("ship must be Ship object.")
         if (_board[x][y].includes('Ocean')){
             _board[x][y] = _board[x][y].replace('Ocean', ship.getName());
-            _shipSpots.push([x, decimalHash(y)]);
             addShipToFleet(ship);
         } 
         else throw new Error("Location already has a ship.")
     }
 
     const receiveAttack = (x, y) => {
-        if (typeof(y) !== 'number') y = decimalHash(y);
         if (x > 9 || y > 9) throw new Error("Target is out of bounds.")
         if (_board[x][y].includes('Miss') || _board[x][y].includes('Hit')) throw new Error("Location has already been targeted.")
         if (_board[x][y].includes('Ocean')){
@@ -48,7 +43,7 @@ export function Gameboard(){
         }
         else{
             let hitShip = _board[x][y]
-            _board[x][y] = x+decimalHash(y)+"hit"
+            _board[x][y] = x+''+y+"Hit"
             return hitShip.hit()
         }//false if hit, true if sunk, 2 if missed
     }
@@ -64,22 +59,12 @@ export function Gameboard(){
         if (!_fleet.includes(ship)) _fleet.push(ship);
     }
 
-    const setInterfaceRef = (ref) => {
-        _interfaceRef = ref;
-    }
-
-    const getInterfaceRef = () => {
-        return _interfaceRef;
-    }
-
     return {
         clearBoard,
         placeShip,
         receiveAttack,
         fleetIsSunk,
-        fleetSize,
-        getInterfaceRef,
-        setInterfaceRef
+        fleetSize
     }
 }
 
@@ -88,7 +73,6 @@ export function Ship(length, name){
     let _name = name;
     let _hits = 0;
     let _sunk = false;
-    let _interfaceRef = null;
 
     const hit = () => {
         _hits++;
@@ -111,21 +95,11 @@ export function Ship(length, name){
         return _name;
     }
 
-    const setInterfaceRef = (ref) => {
-        _interfaceRef = ref;
-    }
-
-    const getInterfaceRef = () => {
-        return _interfaceRef;
-    }
-
     return {
         hit,
         isSunk,
         getLength,
-        getName,
-        setInterfaceRef,
-        getInterfaceRef
+        getName
     }
 }
 
@@ -148,28 +122,19 @@ export function Player(playerName){
 }
 
 export function decimalHash(num){
-        switch (num) {
-            case 0 || '0': return 'a';
-            case 1 || '1': return 'b';
-            case 2 || '2': return 'c';
-            case 3 || '3': return 'd';
-            case 4 || '4': return 'e';
-            case 5 || '5': return 'f';
-            case 6 || '6': return 'g';
-            case 7 || '7': return 'h';
-            case 8 || '8': return 'i';
-            case 9 || '9': return 'j';
+    const map = {
+        0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e',
+        5: 'f', 6: 'g', 7: 'h', 8: 'i', 9: 'j',
+        a: 0, b: 1, c: 2, d: 3, e: 4,
+        f: 5, g: 6, h: 7, i: 8, j: 9,
+    };
+    if (map[num] === undefined) throw new Error('Enter a letter a-j or number 0-9');
 
-            case 'a': return 0;
-            case 'b': return 1;
-            case 'c': return 2;
-            case 'd': return 3;
-            case 'e': return 4;
-            case 'f': return 5;
-            case 'g': return 6;
-            case 'h': return 7;
-            case 'i': return 8;
-            case 'j': return 9;
-            default: throw new Error('Enter a letter a- or number 1-9');
-        }
-    }
+    return map[num];
+}
+
+export function ranUnhashedCoords(){
+    const x = Math.floor(Math.random()*10);
+    const y = Math.floor(Math.random()*10);
+    return [x, y];
+}
