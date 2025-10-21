@@ -1,4 +1,4 @@
-import { decimalHash, ranUnhashedCoords } from "./shipyard.js";
+import { ranUnhashedCoords } from "./shipyard.js";
 
 export function boardDisplay() {
     let p1Board = document.querySelector('.gameBoard');
@@ -20,7 +20,7 @@ export function boardDisplay() {
         document.querySelector('main').style.display = 'flex';
     }
 
-    const flipInterface = () => {
+    const flipPlacement = () => {
         [_activeBoard, _inactiveBoard] = [_inactiveBoard, _activeBoard];
         _inactiveBoard.classList.remove('visible');
         document.querySelector('.gameBoard').replaceWith(_activeBoard)
@@ -42,9 +42,13 @@ export function boardDisplay() {
         document.querySelector('.mainDisplay').textContent = str;
     }
 
+    const beginGame = () => {
+
+    }
+
     return {
         startPlacement,
-        flipInterface,
+        flipPlacement,
         resetBoard,
         updateText
     }
@@ -215,7 +219,7 @@ export function dragPlace(){
         if (e.button === 1) {
             let ship = e.target;
             
-            if (_orientation === 'horizontal'){
+            if (ship.dataset.width > 1){
                  _orientation = 'vertical';
                  ship.classList.add('preVertical');
                  ship.dataset.height = ship.dataset.width;
@@ -296,4 +300,16 @@ export function dragPlace(){
         getTotalCoordinates
     };
 
+}
+
+function decimalHash(num){
+    const map = {
+        0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e',
+        5: 'f', 6: 'g', 7: 'h', 8: 'i', 9: 'j',
+        a: 0, b: 1, c: 2, d: 3, e: 4,
+        f: 5, g: 6, h: 7, i: 8, j: 9,
+    };
+    if (map[num] === undefined) throw new Error('Enter a letter a-j or number 0-9');
+
+    return map[num];
 }
