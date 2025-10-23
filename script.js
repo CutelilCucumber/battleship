@@ -5,9 +5,9 @@ import { computer, placementSet } from "./botAim.js"
 const options = menuOptions();
 const display = boardDisplay();
 options.initialize();
-// document.getElementById()
 let player1 = null;
 let player2 = null;
+let nextPlayer = player1;
 let drag = null;
 let bot = null;
 
@@ -17,47 +17,26 @@ document.getElementById('start').addEventListener('click', startPlace1);
 
 
 function startPlace1() {
-
-    document.getElementById('resetButton').addEventListener('click', () => {
-        resetPlacement(player1)
-    });
-    document.getElementById('confirmButton').addEventListener('click', () => {
-        verifyShips();
-        addFleetToBoard(player1, drag.getTotalCoordinates());
-        startPlace2();
-    });
-    document.getElementById('luckyButton').addEventListener('click', () => {
-        addFleetToBoard(player1, placementSet());
-        startPlace2();
-    });
     player1 = Player(options.getPlayerNames()[0]);
-    display.startPlacement();
-    display.updateText(player1.getName()+', Place your ships.')
-    drag = dragPlace();
-}
-function startPlace2(){
-    
     player2 = Player(options.getPlayerNames()[1]);
+    if (options.getDifficulty > 0) bot = computer();
+    
+    display.startPlacement();
+    resetPlacement(player1);
+    display.updateText(player1.getName()+', Place your ships.')
+    
+}
+
+function startPlace2(){
     if (options.getDifficulty() == 0){
         display.updateText(player2.getName()+', Place your ships.')
-        display.flipPlacement();
         display.resetBoard();
-        drag = dragPlace();
-
-        document.getElementById('resetButton').addEventListener('click', resetPlacement(player2));
-        document.getElementById('confirmButton').addEventListener('click', () => {
-            verifyShips();
-            addFleetToBoard(player2, drag.getTotalCoordinates())
-            beginGame();
-        });
-        document.getElementById('luckyButton').addEventListener('click', () => {
-            addFleetToBoard(player2, placementSet());
-            beginGame();
-        });
+        resetPlacement(player2);
     } else {
-        bot = computer();
         addFleetToBoard(player2, placementSet());
-        beginGame();
+        display.resetBoard();
+        display.beginGame();
+        playerTurn(player1);
     }
 }
 
@@ -71,12 +50,20 @@ function resetPlacement(player) {
         verifyShips();
         addFleetToBoard(player, drag.getTotalCoordinates());
         if(player === player1) startPlace2();
-        else beginGame();
+        else {
+            display.resetBoard();
+            display.beginGame();
+            playerTurn(player1)
+        };
     });
     document.getElementById('luckyButton').addEventListener('click', () => {
         addFleetToBoard(player, placementSet());
         if(player === player1) startPlace2();
-        else beginGame();
+        else {
+            display.resetBoard();
+            display.beginGame();
+            playerTurn(player1)
+        };
     });
 }
 function verifyShips(){
@@ -87,28 +74,42 @@ function verifyShips(){
 }
 function playerTurn(player){
     if (player === player2 && options.getDifficulty() > 0){
-        let result = player1.getBoard().receiveAttack(botTarget());
+        let botAttack = botTarget();
+        let result = player1.getBoard().receiveAttack(botAttack[0], botAttack[1]);
+        bot.rememberResult(result)
         return (playerTurn(player1))
+    } else if (player){
+
     }
 }
+
+function initTargets(player){
+
+}
+
+function attackEvent(){
+
+}
+
+function switchPlayer(){
+    if (nextPlayer === player1) nextPlayer = player2;
+    else if (nextPlayer === player2) nextPlayer = player2;
+    else throw new Error('players unable to switch')
+}
+
 function botTarget(){
-    let shot = []
     switch (options.getDifficulty()) {
         case 1:
-            shot = bot.easyShot();
-            break;
+            return(bot.easyShot());
         case 2:
-            shot = bot.medShot();
-            break;
+            return(bot.medShot());
         case 3:
-            shot = bot.hardShot();
-            break;
+            return(bot.hardShot());
     }
-    return shot;
 }
 
 function addFleetToBoard(player, places){
-    console.log(places);
+    console.log(places, player.getName());
     let fleet = [
         Ship(5, 'Carrier'),
         Ship(5, 'Battleship'),
@@ -120,7 +121,6 @@ function addFleetToBoard(player, places){
         for (let ship of fleet){
             if (places[i][2] === ship.getName()){
                 player.getBoard().placeShip(places[i][0], places[i][1], ship);
-                
             }
         }
     }

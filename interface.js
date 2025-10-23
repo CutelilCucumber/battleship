@@ -1,10 +1,6 @@
 import { ranUnhashedCoords } from "./shipyard.js";
 
 export function boardDisplay() {
-    let p1Board = document.querySelector('.gameBoard');
-    let p2Board = p1Board.cloneNode(true);
-    let _activeBoard = p1Board;//reference to working board
-    let _inactiveBoard = p2Board;
 
     const _cloneBoard = document.querySelector('.gameBoard').cloneNode(true);
     const _cloneDock = document.querySelector('.dock').cloneNode(true);
@@ -15,27 +11,16 @@ export function boardDisplay() {
     function cloneDock() {
         return _cloneDock.cloneNode(true);
     }
-
     const startPlacement = () => {
         document.querySelector('main').style.display = 'flex';
     }
 
-    const flipPlacement = () => {
-        [_activeBoard, _inactiveBoard] = [_inactiveBoard, _activeBoard];
-        _inactiveBoard.classList.remove('visible');
-        document.querySelector('.gameBoard').replaceWith(_activeBoard)
-        _activeBoard.classList.add('visible');
-
-    }
-
-    const resetBoard = (init) => {
+    const resetBoard = () => {
         const newBoard = cloneBoard();
         const newDock = cloneDock();
 
         document.querySelector('.gameBoard').replaceWith(newBoard);
         document.querySelector('.dock').replaceWith(newDock);
-
-        _activeBoard = newBoard;
     }
 
     const updateText = (str) => {
@@ -43,14 +28,21 @@ export function boardDisplay() {
     }
 
     const beginGame = () => {
+        document.querySelector('.dock').remove()
+        //now show 2 empty boards
+        //repaint based off saved board data
+    }
+
+    const flipScreen = (name) => {
 
     }
 
     return {
         startPlacement,
-        flipPlacement,
         resetBoard,
-        updateText
+        updateText,
+        beginGame,
+        flipScreen
     }
 }
 

@@ -20,7 +20,7 @@ export function computer(){
 
     }
 
-    const rememberResult = (result) => {
+    const rememberResult = (result) => {//false if hit, true if sunk, 2 if missed
         
     }
 
