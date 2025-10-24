@@ -1,11 +1,10 @@
 export function computer(){
     
-    let _shotHistory = [ranChoice];
     let ranChoice = [-1, -1];
+    let _shotHistory = [ranChoice];
 
     const easyShot = () => {
         while(!checkAvailability(ranChoice)){
-            console.log(ranChoice);
             ranChoice = [Math.floor(Math.random()*9), Math.floor(Math.random()*9)]
         }
         _shotHistory.push(ranChoice);
@@ -20,7 +19,7 @@ export function computer(){
 
     }
 
-    const rememberResult = (result) => {//false if hit, true if sunk, 2 if missed
+    const rememberResult = (result) => {//false if hit, shipObject if sunk, 2 if missed
         
     }
 

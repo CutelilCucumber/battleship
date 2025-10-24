@@ -1,6 +1,10 @@
 import { ranUnhashedCoords } from "./shipyard.js";
+let p1Name = null;
+let p2Name = null;
 
 export function boardDisplay() {
+    let board1 = null;
+    let board2 = null;
 
     const _cloneBoard = document.querySelector('.gameBoard').cloneNode(true);
     const _cloneDock = document.querySelector('.dock').cloneNode(true);
@@ -11,10 +15,6 @@ export function boardDisplay() {
     function cloneDock() {
         return _cloneDock.cloneNode(true);
     }
-    const startPlacement = () => {
-        document.querySelector('main').style.display = 'flex';
-    }
-
     const resetBoard = () => {
         const newBoard = cloneBoard();
         const newDock = cloneDock();
@@ -24,13 +24,68 @@ export function boardDisplay() {
     }
 
     const updateText = (str) => {
+
+        document.querySelector('main').style.display = 'flex';
         document.querySelector('.mainDisplay').textContent = str;
     }
 
     const beginGame = () => {
-        document.querySelector('.dock').remove()
+        board1 = document.querySelector('.gameBoard');
+        board2 = cloneBoard();
+        document.querySelector('.dock').replaceWith(board2);
+        board1.classList.add(p1Name);
+        board2.classList.add(p2Name);
         //now show 2 empty boards
         //repaint based off saved board data
+    }
+
+    const paintShips = (player) => {
+        let tileArr = player.getBoard().getTileArr()//2d array
+        for(let i = 0; i < 10; i++) {
+            for(let j = 0; j < 10; j++) {
+                if (typeof tileArr[i][j] === 'object'){
+                    let shipTile = document.querySelector('.'+player.getName()).querySelector('.'+decimalHash(i)+j);
+                    shipTile.classList.add('stern')//differentiate here wether to be horizontal or vert
+                    shipTile.textContent = '◉';
+                }   
+            }
+        }
+
+        function findSterns(){
+
+        }
+    }
+
+    const unpaintShips = () => {
+        document.querySelectorAll('.playable').forEach((tile) => {
+            if (!tile.classList.contains('miss') && !tile.classList.contains('hit')){
+                tile.classList.remove('stern');
+                tile.classList.remove('horizontal');
+                tile.classList.remove('vertical');
+                tile.textContent = '';
+            }
+        })
+    }
+
+    const attackSpot = (player, result, x, y) => {
+        let targetSpot = document.querySelector('.'+player.getName()).querySelector('.'+decimalHash(x)+y);
+        targetSpot.textContent = '◉';
+        switch (result) {
+            case 2://miss
+                targetSpot.classList.add('miss')
+                updateText('...miss.')
+                break;
+        
+            case false://hit
+                targetSpot.classList.add('hit')
+                updateText('...hit!')
+                break;
+
+            default://hit and sunk
+                targetSpot.classList.add('hit')
+                updateText(result+' was sunk.')
+                break;
+        }
     }
 
     const flipScreen = (name) => {
@@ -38,11 +93,12 @@ export function boardDisplay() {
     }
 
     return {
-        startPlacement,
         resetBoard,
         updateText,
         beginGame,
-        flipScreen
+        paintShips,
+        unpaintShips,
+        attackSpot
     }
 }
 
@@ -101,16 +157,24 @@ export function menuOptions(){
             })
         });
         document.getElementById('start').addEventListener('click', function(){
-             
                 document.querySelector('nav').style.display = 'none';
-                if (_player1Input.value === '') _player1Input.value = 'Player';
-                if (_difficulty === 0){
-                    if (_player2Input.value === '') {
-                        if (_player1Input.value === '') _player1Input.value = 'Player1';
-                        _player2Input.value = 'Player2';
-                    }
-                } else _player2Input.value = 'Computer';
-                
+                p1Name = _player1Input.value.replaceAll(" ", "_");
+                if (p1Name == '') p1Name = 'Player_1';
+                switch (_difficulty) {
+                    case 1:
+                        p2Name = 'Easy_Bot';
+                        break;
+                    case 2:
+                        p2Name = 'Medium_Bot';
+                        break;
+                    case 3:
+                        p2Name = 'Hard_Bot';
+                        break;
+                    default:
+                    p2Name = _player2Input.value.replaceAll(" ", "_");
+                    if (p2Name == '') p2Name = 'Player_2';
+                        break;
+                }
             });
         
     } 
@@ -120,7 +184,7 @@ export function menuOptions(){
     }
 
     const getPlayerNames = () => {
-        return [_player1Input.value, _player2Input.value]
+        return [p1Name, p2Name]
     }
 
     return {
@@ -294,7 +358,7 @@ export function dragPlace(){
 
 }
 
-function decimalHash(num){
+export function decimalHash(num){
     const map = {
         0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e',
         5: 'f', 6: 'g', 7: 'h', 8: 'i', 9: 'j',

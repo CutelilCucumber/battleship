@@ -1,15 +1,15 @@
 import { Ship, Player } from "./shipyard.js";
-import { boardDisplay, menuOptions, dragPlace } from "./interface.js";
+import { boardDisplay, menuOptions, dragPlace, decimalHash } from "./interface.js";
 import { computer, placementSet } from "./botAim.js"
 
 const options = menuOptions();
 const display = boardDisplay();
+let bot = computer();
 options.initialize();
 let player1 = null;
 let player2 = null;
-let nextPlayer = player1;
+let nextPlayer = null;
 let drag = null;
-let bot = null;
 
 
 
@@ -19,9 +19,8 @@ document.getElementById('start').addEventListener('click', startPlace1);
 function startPlace1() {
     player1 = Player(options.getPlayerNames()[0]);
     player2 = Player(options.getPlayerNames()[1]);
-    if (options.getDifficulty > 0) bot = computer();
+    nextPlayer = player1;
     
-    display.startPlacement();
     resetPlacement(player1);
     display.updateText(player1.getName()+', Place your ships.')
     
@@ -35,7 +34,7 @@ function startPlace2(){
     } else {
         addFleetToBoard(player2, placementSet());
         display.resetBoard();
-        display.beginGame();
+        display.beginGame(player1.getName(), player2.getName());
         playerTurn(player1);
     }
 }
@@ -52,8 +51,8 @@ function resetPlacement(player) {
         if(player === player1) startPlace2();
         else {
             display.resetBoard();
-            display.beginGame();
-            playerTurn(player1)
+            display.beginGame(player1.getName(), player2.getName());
+            playerTurn(player1);
         };
     });
     document.getElementById('luckyButton').addEventListener('click', () => {
@@ -61,40 +60,60 @@ function resetPlacement(player) {
         if(player === player1) startPlace2();
         else {
             display.resetBoard();
-            display.beginGame();
+            display.beginGame(player1.getName(), player2.getName());
             playerTurn(player1)
         };
     });
 }
-function verifyShips(){
-    if (drag.getTotalCoordinates().length !== 17){
-        display.updateText('Place all available ships.')
-        throw new Error('Incorrect fleet size')
-    }
-}
+
 function playerTurn(player){
+    alternateNext();
+    display.updateText(player.getName()+'`s turn')
     if (player === player2 && options.getDifficulty() > 0){
         let botAttack = botTarget();
         let result = player1.getBoard().receiveAttack(botAttack[0], botAttack[1]);
-        bot.rememberResult(result)
-        return (playerTurn(player1))
-    } else if (player){
-
+        //false if hit, true if sunk, 2 if missed
+        display.attackSpot(player1, result, botAttack[0], botAttack[1]);
+        bot.rememberResult(result);
+        return (playerTurn(player1));
+    } else {
+        display.paintShips(player);
+        initTargets();
     }
 }
 
-function initTargets(player){
-
+function initTargets(){
+    document.querySelector('.'+nextPlayer.getName()).querySelectorAll('.playable')
+        .forEach((target) => {
+            target.classList.add('target');
+            target.addEventListener('click', attackEvent);
+    })
+}
+function removeTargets(){
+    document.querySelector('.'+nextPlayer.getName()).querySelectorAll('.playable')
+        .forEach((target) => {
+            target.classList.remove('target');
+            target.removeEventListener('click', attackEvent);
+    })
 }
 
-function attackEvent(){
-
-}
-
-function switchPlayer(){
-    if (nextPlayer === player1) nextPlayer = player2;
-    else if (nextPlayer === player2) nextPlayer = player2;
-    else throw new Error('players unable to switch')
+function attackEvent(e){
+    let x = e.target.className[0];
+    let y = e.target.className[1];
+    if (typeof(x) !== 'number') x = decimalHash(x);
+    if (typeof(y) !== 'number') y = Number(y);
+    
+    let result = nextPlayer.getBoard().receiveAttack(x, y);
+    display.attackSpot(nextPlayer, result, x, y);
+    //false if hit, shipObj if sunk, 2 if missed
+    e.target.classList.remove('target'); 
+    let delay = 1000;
+    if (result !== 2 && result !== false) delay = 2000;
+    removeTargets();
+    setTimeout(() => {
+        display.unpaintShips();
+        playerTurn(nextPlayer)
+    }, delay);
 }
 
 function botTarget(){
@@ -108,14 +127,18 @@ function botTarget(){
     }
 }
 
+function alternateNext(){
+    if (nextPlayer == player1) nextPlayer = player2;
+    else if (nextPlayer == player2) nextPlayer = player1;
+}
+
 function addFleetToBoard(player, places){
-    console.log(places, player.getName());
     let fleet = [
         Ship(5, 'Carrier'),
-        Ship(5, 'Battleship'),
-        Ship(5, 'Cruiser'),
-        Ship(5, 'Submarine'),
-        Ship(5, 'Destroyer')
+        Ship(4, 'Battleship'),
+        Ship(3, 'Cruiser'),
+        Ship(3, 'Submarine'),
+        Ship(2, 'Destroyer')
     ] 
     for(let i=0; i<places.length; i++){
         for (let ship of fleet){
@@ -124,4 +147,10 @@ function addFleetToBoard(player, places){
             }
         }
     }
+}
+function verifyShips(){
+    if (drag.getTotalCoordinates().length !== 17){
+        display.updateText('Place all available ships.');
+        throw new Error('Incorrect fleet size');
+    };
 }

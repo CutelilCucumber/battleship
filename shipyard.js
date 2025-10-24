@@ -1,3 +1,4 @@
+
 export function Gameboard(){
     const _board = initBoard();
     let _fleet = [];
@@ -28,7 +29,7 @@ export function Gameboard(){
         if (x > 9 || y > 9) throw new Error("Target is out of bounds.")
         if (!Object.hasOwn(ship, 'isSunk')) throw new Error("ship must be Ship object.")
         if (_board[x][y].includes('Ocean')){
-            _board[x][y] = _board[x][y].replace('Ocean', ship.getName());
+            _board[x][y] = ship;
             addShipToFleet(ship);
         } 
         else throw new Error("Location already has a ship.")
@@ -36,16 +37,16 @@ export function Gameboard(){
 
     const receiveAttack = (x, y) => {
         if (x > 9 || y > 9) throw new Error("Target is out of bounds.")
-        if (_board[x][y].includes('Miss') || _board[x][y].includes('Hit')) throw new Error("Location has already been targeted.")
-        if (_board[x][y].includes('Ocean')){
+        if (typeof _board[x][y] === 'object') {
+            let hitShip = _board[x][y]
+            _board[x][y] = x+''+y+"Hit"
+            return hitShip.hit()//false if hit, true if sunk, 2 if missed
+        }
+        else if (_board[x][y].includes('Miss') || _board[x][y].includes('Hit')) throw new Error("Location has already been targeted.")
+        else if (_board[x][y].includes('Ocean')){
             _board[x][y].replace('Ocean', 'Miss');
             return 2;
         }
-        else{
-            let hitShip = _board[x][y]
-            _board[x][y] = x+''+y+"Hit"
-            return hitShip.hit()
-        }//false if hit, true if sunk, 2 if missed
     }
 
     const fleetIsSunk = () => {
@@ -59,12 +60,17 @@ export function Gameboard(){
         if (!_fleet.includes(ship)) _fleet.push(ship);
     }
 
+    const getTileArr = () => {
+        return _board;
+    }
+
     return {
         clearBoard,
         placeShip,
         receiveAttack,
         fleetIsSunk,
-        fleetSize
+        fleetSize,
+        getTileArr
     }
 }
 
@@ -82,6 +88,7 @@ export function Ship(length, name){
     function isSunk(){
         if (_hits >= _length){
             _sunk = true;
+            
             return _name;
         }
         else return false;

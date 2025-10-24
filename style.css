@@ -63,9 +63,11 @@ h1 {
 }
 .hit {
     color: red !important;
+    text-shadow: 0 0 5px red, 0 0 10px red !important; 
 }
 .miss {
-    color: red !important;
+    color: white !important;
+    text-shadow: 0 0 5px white, 0 0 10px white !important;
 }
 .draggable {
     cursor: grab;
@@ -148,6 +150,7 @@ main {
 }
 
 .gameBoard > div {
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -182,6 +185,7 @@ main {
 
 .target:hover {
     cursor: crosshair;
+    background-color: rgba(0, 168, 0, .15);
 }
 
 #opponentBoard {
