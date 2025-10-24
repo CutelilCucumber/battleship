@@ -148,7 +148,13 @@ main {
 .board2 {
     display: none;
 }
-
+.hidden {
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+.displayContainer {
+    display: flex;
+}
 .gameBoard > div {
     padding: 0;
     display: flex;

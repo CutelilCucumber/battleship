@@ -67,16 +67,24 @@ function resetPlacement(player) {
 }
 
 function playerTurn(player){
+    if (options.getDifficulty() === 0) display.hideScreen();
     alternateNext();
-    display.updateText(player.getName()+'`s turn')
     if (player === player2 && options.getDifficulty() > 0){
         let botAttack = botTarget();
         let result = player1.getBoard().receiveAttack(botAttack[0], botAttack[1]);
         //false if hit, true if sunk, 2 if missed
         display.attackSpot(player1, result, botAttack[0], botAttack[1]);
         bot.rememberResult(result);
-        return (playerTurn(player1));
+        let delay = 1000;
+        if (result !== 2 && result !== false) {
+            delay = 2000;
+            if (nextPlayer.getBoard().fleetIsSunk()) return declareWinner()
+            }
+        setTimeout(() => {
+            return (playerTurn(player1));
+        }, delay);
     } else {
+        display.updateText(player.getName()+'`s turn.')
         display.paintShips(player);
         initTargets();
     }
@@ -85,8 +93,10 @@ function playerTurn(player){
 function initTargets(){
     document.querySelector('.'+nextPlayer.getName()).querySelectorAll('.playable')
         .forEach((target) => {
-            target.classList.add('target');
-            target.addEventListener('click', attackEvent);
+            if (!target.classList.contains('miss') && !target.classList.contains('hit')){
+                target.classList.add('target');
+                target.addEventListener('click', attackEvent);
+        }
     })
 }
 function removeTargets(){
@@ -108,7 +118,10 @@ function attackEvent(e){
     //false if hit, shipObj if sunk, 2 if missed
     e.target.classList.remove('target'); 
     let delay = 1000;
-    if (result !== 2 && result !== false) delay = 2000;
+    if (result !== 2 && result !== false) {
+        delay = 2000;
+        if (nextPlayer.getBoard().fleetIsSunk()) return declareWinner()
+        }
     removeTargets();
     setTimeout(() => {
         display.unpaintShips();
@@ -125,6 +138,19 @@ function botTarget(){
         case 3:
             return(bot.hardShot());
     }
+}
+function declareWinner(){
+    removeTargets();
+    let winner = null;
+    if(nextPlayer === player1) winner = player2;
+    else winner = player1;
+    setTimeout(() => {
+        display.updateText('all '+nextPlayer.getName()+'`s ship were sunk.');
+    }, 2000)
+    setTimeout(() => {
+        display.updateText(winner.getName()+' is the winner!');
+    }, 5000)
+
 }
 
 function alternateNext(){

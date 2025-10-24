@@ -24,9 +24,14 @@ export function boardDisplay() {
     }
 
     const updateText = (str) => {
-
+        let text = document.querySelector('.mainDisplay');
+        text.textContent = '>';
         document.querySelector('main').style.display = 'flex';
-        document.querySelector('.mainDisplay').textContent = str;
+        for(let i = 0; i<str.length; i++){
+            setTimeout(() => {
+                text.textContent += str[i];
+            }, 50 * i)
+        }
     }
 
     const beginGame = () => {
@@ -88,17 +93,37 @@ export function boardDisplay() {
         }
     }
 
-    const flipScreen = (name) => {
+    const hideScreen = () => {
+        document.querySelectorAll('.gameBoard').forEach((board) => {
+            board.classList.add('hidden');
+        });
+        let readyBtn = document.createElement('button');
+        readyBtn.textContent = 'Ready';
+        readyBtn.classList.add('readyBtn')
+        readyBtn.classList.add('hidden');
+        document.querySelector('.displayContainer').appendChild(readyBtn);
+        readyBtn.addEventListener('click', showScreen)
 
+        setTimeout(() => {
+            readyBtn.classList.remove('hidden');
+        }, 800)
+        function showScreen(){
+            readyBtn.remove()
+            document.querySelectorAll('.gameBoard').forEach((board) => {
+                board.classList.remove('hidden');
+            });
+        }
     }
 
+    
     return {
         resetBoard,
         updateText,
         beginGame,
         paintShips,
         unpaintShips,
-        attackSpot
+        attackSpot,
+        hideScreen
     }
 }
 
