@@ -1,29 +1,81 @@
 export function computer(){
     
-    let ranChoice = [-1, -1];
-    let _shotHistory = [ranChoice];
+    let _ranChoice = [-1, -1];
+    let _nextGuess = [];
+    let _lastHit = [];
+    let _shotHistory = [_ranChoice];
+    
 
     const easyShot = () => {
-        while(!checkAvailability(ranChoice)){
-            ranChoice = [Math.floor(Math.random()*9), Math.floor(Math.random()*9)]
+        while(!checkAvailability(_ranChoice)){
+            _ranChoice = [Math.floor(Math.random()*10), Math.floor(Math.random()*10)]
         }
-        _shotHistory.push(ranChoice);
-        return ranChoice;
+        _shotHistory.push(_ranChoice);
+        return _ranChoice;
     }
 
     const medShot = () => {
-
+        
+        if (_nextGuess.length === 0){
+            return easyShot();
+        } else {
+            let choice = _nextGuess.pop();
+            _shotHistory.push(choice);
+            return choice;
+        }
     }
 
     const hardShot = () => {
-
+        //create potential location heatmap
     }
 
-    const rememberResult = (result) => {//false if hit, shipObject if sunk, 2 if missed
-        
+    const rememberResult = (result) => {
+        switch (result) {
+            case 2://miss
+                break;
+
+            case false://hit
+                if (_lastHit.length === 0){//first hit
+                    _lastHit = _shotHistory[_shotHistory.length-1];
+                    aimAdjacent();
+                } else {//not first hit
+                    let previousHit = _lastHit;
+                    _lastHit = _shotHistory[_shotHistory.length-1];
+                    aimAdjacent();
+                    trimGuess(previousHit);
+                }
+                    
+
+                break;
+
+            default://sunk
+                _nextGuess = [];
+                _lastHit = [];
+                break;
+        }
+
+        function aimAdjacent(){
+            let adjacent = [[_lastHit[0]+1, _lastHit[1]], [_lastHit[0], _lastHit[1]+1],
+                [_lastHit[0]-1, _lastHit[1]], [_lastHit[0], _lastHit[1]-1]];
+            for (let i = 0; i < adjacent.length; i++) {
+                if(checkAvailability(adjacent[i]) === true) _nextGuess.push(adjacent[i]);
+            }
+        }
+        function trimGuess(previousHit){
+            let vertical = false;
+            if(previousHit[0] === _lastHit[0]) vertical = true;
+            for (let i = 0; i < _nextGuess.length; i++) {
+                if(vertical){
+                    if(_nextGuess[i][0] !== _lastHit[0]) _nextGuess.splice(i--, 1);
+                } else {
+                    if(_nextGuess[i][1] !== _lastHit[1]) _nextGuess.splice(i--, 1);
+                }
+            }
+        }
     }
 
     function checkAvailability(possible){
+        if (possible[0] > 9 || possible[0] < 0 || possible[1] > 9 || possible[1] < 0) return false;
         for (let shot of _shotHistory) {
             
             if(JSON.stringify(shot) === JSON.stringify(possible)) return false;
@@ -43,6 +95,7 @@ export function computer(){
 
 export function placementSet(choice){ //pre-built placement sets
     let num = choice ?? Math.floor(Math.random()*20);
+    console.log('Preset placement: '+num)
     const map = {
         0: [
             [1, 1, 'Carrier'], [1, 2, 'Carrier'], [1, 3, 'Carrier'], [1, 4, 'Carrier'], [1, 5, 'Carrier'],
@@ -148,7 +201,7 @@ export function placementSet(choice){ //pre-built placement sets
 
   14 : [
     [4,4,'Carrier'], [5,4,'Carrier'], [6,4,'Carrier'], [7,4,'Carrier'], [8,4,'Carrier'],
-    [9,7,'Battleship'], [9,8,'Battleship'], [9,9,'Battleship'], [8,9,'Battleship'],
+    [9,7,'Battleship'], [9,8,'Battleship'], [9,9,'Battleship'], [9,6,'Battleship'],
     [3,1,'Cruiser'], [3,2,'Cruiser'], [3,3,'Cruiser'],
     [6,7,'Submarine'], [6,8,'Submarine'], [6,9,'Submarine'],
     [1,6,'Destroyer'], [2,6,'Destroyer']

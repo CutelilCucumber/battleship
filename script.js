@@ -85,7 +85,10 @@ function playerTurn(player){
         }, delay);
     } else {
         display.updateText(player.getName()+'`s turn.')
-        display.paintShips(player);
+        if (options.getDifficulty() > 0) display.paintShips(player);
+        else setTimeout(() => {
+            display.paintShips(player);
+        }, 600)
         initTargets();
     }
 }

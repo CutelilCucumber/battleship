@@ -16,10 +16,12 @@ export function boardDisplay() {
         return _cloneDock.cloneNode(true);
     }
     const resetBoard = () => {
+        resyncRadar();
         const newBoard = cloneBoard();
         const newDock = cloneDock();
 
         document.querySelector('.gameBoard').replaceWith(newBoard);
+        newBoard.classList.add('show');
         document.querySelector('.dock').replaceWith(newDock);
     }
 
@@ -35,13 +37,13 @@ export function boardDisplay() {
     }
 
     const beginGame = () => {
+        resyncRadar();
         board1 = document.querySelector('.gameBoard');
         board2 = cloneBoard();
         document.querySelector('.dock').replaceWith(board2);
         board1.classList.add(p1Name);
         board2.classList.add(p2Name);
-        //now show 2 empty boards
-        //repaint based off saved board data
+        board2.classList.add('show');
     }
 
     const paintShips = (player) => {
@@ -95,27 +97,43 @@ export function boardDisplay() {
 
     const hideScreen = () => {
         document.querySelectorAll('.gameBoard').forEach((board) => {
-            board.classList.add('hidden');
+            restartAnimation(board, 'hide');
         });
         let readyBtn = document.createElement('button');
         readyBtn.textContent = 'Ready';
-        readyBtn.classList.add('readyBtn')
-        readyBtn.classList.add('hidden');
+        readyBtn.classList.add('readyBtn');
         document.querySelector('.displayContainer').appendChild(readyBtn);
         readyBtn.addEventListener('click', showScreen)
 
         setTimeout(() => {
-            readyBtn.classList.remove('hidden');
-        }, 800)
+            restartAnimation(readyBtn, 'show');
+        }, 800);
+
         function showScreen(){
-            readyBtn.remove()
+            readyBtn.remove();
             document.querySelectorAll('.gameBoard').forEach((board) => {
-                board.classList.remove('hidden');
+                restartAnimation(board, 'show');
             });
         }
+        
+    }
+    function restartAnimation(element, cls) {
+        element.classList.remove('hide');
+        element.classList.remove('show');
+        element.style.animation = 'none';
+
+        requestAnimationFrame(() => {
+            element.style.animation = '';
+            element.classList.add(cls);
+        });
+    }
+    function resyncRadar(){
+        let radar = document.getElementById('radar');
+        radar.style.animation = 'none';
+        radar.offsetHeight;
+        radar.style.animation = ''
     }
 
-    
     return {
         resetBoard,
         updateText,
@@ -163,13 +181,14 @@ export function menuOptions(){
             })
             e.target.style.backgroundColor = 'lightgreen';
         })
-        document.getElementById('hard').addEventListener('click', function(e){
-            _difficulty = 3;
-            document.querySelectorAll(".difficulty").forEach(option => {
-                option.style.backgroundColor = null;
-            })
-            e.target.style.backgroundColor = 'lightgreen'
-        })
+        //add this after using higher difficulty levels
+        // document.getElementById('hard').addEventListener('click', function(e){
+        //     _difficulty = 3;
+        //     document.querySelectorAll(".difficulty").forEach(option => {
+        //         option.style.backgroundColor = null;
+        //     })
+        //     e.target.style.backgroundColor = 'lightgreen'
+        // })
         document.getElementById('multiOption').addEventListener('click', function(e){
             _difficulty = 0;
             e.target.style.backgroundColor = "lightgreen";
